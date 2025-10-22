@@ -25,16 +25,16 @@
 
 ## 3. Firebase Authentication Implementation
 
-- [ ] 3.1 Create auth.ts helper file with Firebase Auth functions
-- [ ] 3.2 Create auth Pinia store for user state management
-- [ ] 3.3 Implement register with email/password
-- [ ] 3.4 Implement login with email/password
-- [ ] 3.5 Implement login with Google OAuth
-- [ ] 3.6 Implement logout functionality
-- [ ] 3.7 Implement password reset flow
-- [ ] 3.8 Implement email verification
-- [ ] 3.9 Create auth state observer (onAuthStateChanged)
-- [ ] 3.10 Add route guards for authentication in Vue Router
+- [x] 3.1 Create auth.ts helper file with Firebase Auth functions
+- [x] 3.2 Create auth Pinia store for user state management
+- [x] 3.3 Implement register with email/password
+- [x] 3.4 Implement login with email/password
+- [x] 3.5 Implement login with Google OAuth
+- [x] 3.6 Implement logout functionality
+- [x] 3.7 Implement password reset flow
+- [x] 3.8 Implement email verification
+- [x] 3.9 Create auth state observer (onAuthStateChanged)
+- [x] 3.10 Add route guards for authentication in Vue Router
 
 ## 4. Firebase Authentication UI
 
