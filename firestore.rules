@@ -3,17 +3,216 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // This rule allows anyone with your Firestore database reference to view, edit,
-    // and delete all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Firestore database will be denied until you Update
-    // your rules
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2025, 11, 22);
+    // ==================================================
+    // HELPER FUNCTIONS
+    // ==================================================
+
+    /**
+     * Check if user is authenticated
+     */
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    /**
+     * Check if authenticated user is the owner of the resource
+     */
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    /**
+     * Validate timestamp field is server timestamp or valid timestamp
+     */
+    function isValidTimestamp(ts) {
+      return ts is timestamp || ts == request.time;
+    }
+
+    /**
+     * Check if data has required field
+     */
+    function hasRequiredField(field) {
+      return request.resource.data[field] != null;
+    }
+
+    // ==================================================
+    // USERS COLLECTION
+    // Task 6.1: Security rules for users/{userId}
+    // ==================================================
+
+    match /users/{userId} {
+      // Users can only read and write their own user document
+      allow read: if isOwner(userId);
+
+      // Allow creating user document during registration
+      allow create: if isOwner(userId)
+                    && hasRequiredField('email')
+                    && request.resource.data.email is string
+                    && hasRequiredField('createdAt')
+                    && isValidTimestamp(request.resource.data.createdAt);
+
+      // Allow updating user document (profile updates)
+      allow update: if isOwner(userId);
+
+      // Prevent deletion of user document (users should be archived, not deleted)
+      allow delete: if false;
+
+      // ==================================================
+      // PORTFOLIOS SUBCOLLECTION
+      // Task 6.2: Security rules for portfolios/{portfolioId}
+      // ==================================================
+
+      match /portfolios/{portfolioId} {
+        // Users can only access portfolios under their own user document
+        allow read: if isOwner(userId);
+
+        // Allow creating portfolio with required fields validation
+        allow create: if isOwner(userId)
+                      && hasRequiredField('name')
+                      && request.resource.data.name is string
+                      && request.resource.data.name.size() > 0
+                      && request.resource.data.name.size() <= 100
+                      && hasRequiredField('initialCapital')
+                      && request.resource.data.initialCapital is number
+                      && request.resource.data.initialCapital >= 0
+                      && hasRequiredField('baseCurrency')
+                      && request.resource.data.baseCurrency is string
+                      && request.resource.data.baseCurrency in ['IDR', 'USD', 'EUR', 'SGD', 'JPY']
+                      && hasRequiredField('marketType')
+                      && request.resource.data.marketType is string
+                      && request.resource.data.marketType in ['IDX', 'US_STOCKS', 'CRYPTO', 'FOREX']
+                      && hasRequiredField('createdAt')
+                      && isValidTimestamp(request.resource.data.createdAt)
+                      && hasRequiredField('updatedAt')
+                      && isValidTimestamp(request.resource.data.updatedAt);
+
+        // Allow updating portfolio (name, description, etc.)
+        allow update: if isOwner(userId)
+                      && hasRequiredField('name')
+                      && request.resource.data.name is string
+                      && request.resource.data.name.size() > 0
+                      && request.resource.data.name.size() <= 100
+                      && hasRequiredField('initialCapital')
+                      && request.resource.data.initialCapital is number
+                      && request.resource.data.initialCapital >= 0
+                      && hasRequiredField('baseCurrency')
+                      && request.resource.data.baseCurrency is string
+                      && hasRequiredField('marketType')
+                      && request.resource.data.marketType is string
+                      && hasRequiredField('updatedAt')
+                      && isValidTimestamp(request.resource.data.updatedAt);
+
+        // Allow deleting portfolio (will cascade delete subcollections in application)
+        allow delete: if isOwner(userId);
+
+        // ==================================================
+        // TRADES SUBCOLLECTION
+        // Task 6.3: Security rules for trades/{tradeId}
+        // ==================================================
+
+        match /trades/{tradeId} {
+          // Users can only access trades under their own portfolio
+          allow read: if isOwner(userId);
+
+          // Allow creating trade with required fields validation
+          allow create: if isOwner(userId)
+                        && hasRequiredField('portfolioId')
+                        && request.resource.data.portfolioId is string
+                        && hasRequiredField('symbol')
+                        && request.resource.data.symbol is string
+                        && request.resource.data.symbol.size() > 0
+                        && request.resource.data.symbol.size() <= 10
+                        && hasRequiredField('type')
+                        && request.resource.data.type is string
+                        && request.resource.data.type in ['BUY', 'SELL']
+                        && hasRequiredField('quantity')
+                        && request.resource.data.quantity is number
+                        && request.resource.data.quantity > 0
+                        && hasRequiredField('price')
+                        && request.resource.data.price is number
+                        && request.resource.data.price > 0
+                        && hasRequiredField('date')
+                        && isValidTimestamp(request.resource.data.date)
+                        && hasRequiredField('createdAt')
+                        && isValidTimestamp(request.resource.data.createdAt)
+                        && hasRequiredField('updatedAt')
+                        && isValidTimestamp(request.resource.data.updatedAt)
+                        // Validate optional fees field if present
+                        && (!('fees' in request.resource.data) || (request.resource.data.fees is number && request.resource.data.fees >= 0))
+                        // Validate optional notes field if present
+                        && (!('notes' in request.resource.data) || (request.resource.data.notes is string && request.resource.data.notes.size() <= 1000));
+
+          // Allow updating trade
+          allow update: if isOwner(userId)
+                        && hasRequiredField('portfolioId')
+                        && request.resource.data.portfolioId is string
+                        && hasRequiredField('symbol')
+                        && request.resource.data.symbol is string
+                        && request.resource.data.symbol.size() > 0
+                        && request.resource.data.symbol.size() <= 10
+                        && hasRequiredField('type')
+                        && request.resource.data.type is string
+                        && request.resource.data.type in ['BUY', 'SELL']
+                        && hasRequiredField('quantity')
+                        && request.resource.data.quantity is number
+                        && request.resource.data.quantity > 0
+                        && hasRequiredField('price')
+                        && request.resource.data.price is number
+                        && request.resource.data.price > 0
+                        && hasRequiredField('date')
+                        && isValidTimestamp(request.resource.data.date)
+                        && hasRequiredField('updatedAt')
+                        && isValidTimestamp(request.resource.data.updatedAt)
+                        // Validate optional fields if present
+                        && (!('fees' in request.resource.data) || (request.resource.data.fees is number && request.resource.data.fees >= 0))
+                        && (!('notes' in request.resource.data) || (request.resource.data.notes is string && request.resource.data.notes.size() <= 1000));
+
+          // Allow deleting trade
+          allow delete: if isOwner(userId);
+        }
+
+        // ==================================================
+        // JOURNALS SUBCOLLECTION
+        // Task 6.4: Security rules for journals/{journalId}
+        // ==================================================
+
+        match /journals/{journalId} {
+          // Users can only access journals under their own portfolio
+          allow read: if isOwner(userId);
+
+          // Allow creating journal entry with optional fields validation
+          allow create: if isOwner(userId)
+                        && hasRequiredField('portfolioId')
+                        && request.resource.data.portfolioId is string
+                        && hasRequiredField('createdAt')
+                        && isValidTimestamp(request.resource.data.createdAt)
+                        && hasRequiredField('updatedAt')
+                        && isValidTimestamp(request.resource.data.updatedAt)
+                        // Validate optional tradeId field if present
+                        && (!('tradeId' in request.resource.data) || request.resource.data.tradeId is string)
+                        // Validate optional text fields if present (max 5000 chars each)
+                        && (!('entryReason' in request.resource.data) || (request.resource.data.entryReason is string && request.resource.data.entryReason.size() <= 5000))
+                        && (!('exitStrategy' in request.resource.data) || (request.resource.data.exitStrategy is string && request.resource.data.exitStrategy.size() <= 5000))
+                        && (!('emotions' in request.resource.data) || (request.resource.data.emotions is string && request.resource.data.emotions.size() <= 5000))
+                        && (!('lessonsLearned' in request.resource.data) || (request.resource.data.lessonsLearned is string && request.resource.data.lessonsLearned.size() <= 5000));
+
+          // Allow updating journal entry
+          allow update: if isOwner(userId)
+                        && hasRequiredField('portfolioId')
+                        && request.resource.data.portfolioId is string
+                        && hasRequiredField('updatedAt')
+                        && isValidTimestamp(request.resource.data.updatedAt)
+                        // Validate optional fields if present
+                        && (!('tradeId' in request.resource.data) || request.resource.data.tradeId is string)
+                        && (!('entryReason' in request.resource.data) || (request.resource.data.entryReason is string && request.resource.data.entryReason.size() <= 5000))
+                        && (!('exitStrategy' in request.resource.data) || (request.resource.data.exitStrategy is string && request.resource.data.exitStrategy.size() <= 5000))
+                        && (!('emotions' in request.resource.data) || (request.resource.data.emotions is string && request.resource.data.emotions.size() <= 5000))
+                        && (!('lessonsLearned' in request.resource.data) || (request.resource.data.lessonsLearned is string && request.resource.data.lessonsLearned.size() <= 5000));
+
+          // Allow deleting journal entry
+          allow delete: if isOwner(userId);
+        }
+      }
     }
   }
 }
