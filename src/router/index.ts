@@ -55,20 +55,9 @@ const protectedRoutes: RouteRecordRaw[] = [
   },
 ]
 
-/**
- * Public routes - accessible by anyone
- */
-const publicRoutes: RouteRecordRaw[] = [
-  {
-    path: '/about',
-    name: 'about',
-    component: () => import('@/views/AboutView.vue'),
-  },
-]
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [...authRoutes, ...protectedRoutes, ...publicRoutes],
+  routes: [...authRoutes, ...protectedRoutes],
 })
 
 /**
