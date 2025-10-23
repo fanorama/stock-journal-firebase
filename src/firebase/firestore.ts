@@ -1,0 +1,359 @@
+/**
+ * Firestore Helper Functions
+ *
+ * This file contains utility functions for interacting with Firestore collections.
+ * It provides type-safe wrappers around Firestore operations.
+ */
+
+import {
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDocs,
+  getDoc,
+  query,
+  where,
+  orderBy,
+  type CollectionReference,
+  type DocumentReference,
+  type Query,
+  type QueryConstraint,
+  Timestamp,
+  serverTimestamp,
+} from 'firebase/firestore'
+import { db } from './config'
+import type {
+  Portfolio,
+  PortfolioInput,
+  Trade,
+  TradeInput,
+  Journal,
+  JournalInput,
+} from '@/types'
+
+// ============================================================================
+// Collection References
+// ============================================================================
+
+/**
+ * Get portfolios collection reference for a user
+ */
+export function getPortfoliosCollection(userId: string): CollectionReference {
+  return collection(db, `users/${userId}/portfolios`)
+}
+
+/**
+ * Get specific portfolio document reference
+ */
+export function getPortfolioDoc(
+  userId: string,
+  portfolioId: string
+): DocumentReference {
+  return doc(db, `users/${userId}/portfolios/${portfolioId}`)
+}
+
+/**
+ * Get trades collection reference for a portfolio
+ */
+export function getTradesCollection(
+  userId: string,
+  portfolioId: string
+): CollectionReference {
+  return collection(db, `users/${userId}/portfolios/${portfolioId}/trades`)
+}
+
+/**
+ * Get specific trade document reference
+ */
+export function getTradeDoc(
+  userId: string,
+  portfolioId: string,
+  tradeId: string
+): DocumentReference {
+  return doc(db, `users/${userId}/portfolios/${portfolioId}/trades/${tradeId}`)
+}
+
+/**
+ * Get journals collection reference for a portfolio
+ */
+export function getJournalsCollection(
+  userId: string,
+  portfolioId: string
+): CollectionReference {
+  return collection(db, `users/${userId}/portfolios/${portfolioId}/journals`)
+}
+
+/**
+ * Get specific journal document reference
+ */
+export function getJournalDoc(
+  userId: string,
+  portfolioId: string,
+  journalId: string
+): DocumentReference {
+  return doc(
+    db,
+    `users/${userId}/portfolios/${portfolioId}/journals/${journalId}`
+  )
+}
+
+// ============================================================================
+// Portfolio Operations
+// ============================================================================
+
+/**
+ * Create a new portfolio
+ */
+export async function createPortfolio(
+  userId: string,
+  input: PortfolioInput
+): Promise<string> {
+  const portfoliosRef = getPortfoliosCollection(userId)
+  const docRef = await addDoc(portfoliosRef, {
+    ...input,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return docRef.id
+}
+
+/**
+ * Update an existing portfolio
+ */
+export async function updatePortfolio(
+  userId: string,
+  portfolioId: string,
+  updates: Partial<PortfolioInput>
+): Promise<void> {
+  const portfolioRef = getPortfolioDoc(userId, portfolioId)
+  await updateDoc(portfolioRef, {
+    ...updates,
+    updatedAt: serverTimestamp(),
+  })
+}
+
+/**
+ * Delete a portfolio and all its subcollections
+ * Note: This requires deleting all trades and journals manually
+ * or using Cloud Functions for cascading delete
+ */
+export async function deletePortfolio(
+  userId: string,
+  portfolioId: string
+): Promise<void> {
+  // TODO: Implement cascading delete for trades and journals
+  // For MVP, we'll just delete the portfolio document
+  // In production, use Cloud Functions or batch delete
+  const portfolioRef = getPortfolioDoc(userId, portfolioId)
+  await deleteDoc(portfolioRef)
+}
+
+// ============================================================================
+// Trade Operations
+// ============================================================================
+
+/**
+ * Create a new trade
+ */
+export async function createTrade(
+  userId: string,
+  portfolioId: string,
+  input: TradeInput
+): Promise<string> {
+  const tradesRef = getTradesCollection(userId, portfolioId)
+
+  // Convert date to Timestamp if it's a Date object
+  const tradeData = {
+    ...input,
+    date: input.date instanceof Date ? Timestamp.fromDate(input.date) : input.date,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  }
+
+  const docRef = await addDoc(tradesRef, tradeData)
+  return docRef.id
+}
+
+/**
+ * Update an existing trade
+ */
+export async function updateTrade(
+  userId: string,
+  portfolioId: string,
+  tradeId: string,
+  updates: Partial<TradeInput>
+): Promise<void> {
+  const tradeRef = getTradeDoc(userId, portfolioId, tradeId)
+
+  const updateData: any = {
+    ...updates,
+    updatedAt: serverTimestamp(),
+  }
+
+  // Convert date to Timestamp if it's a Date object
+  if (updates.date && updates.date instanceof Date) {
+    updateData.date = Timestamp.fromDate(updates.date)
+  }
+
+  await updateDoc(tradeRef, updateData)
+}
+
+/**
+ * Delete a trade
+ */
+export async function deleteTrade(
+  userId: string,
+  portfolioId: string,
+  tradeId: string
+): Promise<void> {
+  const tradeRef = getTradeDoc(userId, portfolioId, tradeId)
+  await deleteDoc(tradeRef)
+}
+
+// ============================================================================
+// Journal Operations
+// ============================================================================
+
+/**
+ * Create a new journal entry
+ */
+export async function createJournal(
+  userId: string,
+  portfolioId: string,
+  input: JournalInput
+): Promise<string> {
+  const journalsRef = getJournalsCollection(userId, portfolioId)
+  const docRef = await addDoc(journalsRef, {
+    ...input,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return docRef.id
+}
+
+/**
+ * Update an existing journal entry
+ */
+export async function updateJournal(
+  userId: string,
+  portfolioId: string,
+  journalId: string,
+  updates: Partial<JournalInput>
+): Promise<void> {
+  const journalRef = getJournalDoc(userId, portfolioId, journalId)
+  await updateDoc(journalRef, {
+    ...updates,
+    updatedAt: serverTimestamp(),
+  })
+}
+
+/**
+ * Delete a journal entry
+ */
+export async function deleteJournal(
+  userId: string,
+  portfolioId: string,
+  journalId: string
+): Promise<void> {
+  const journalRef = getJournalDoc(userId, portfolioId, journalId)
+  await deleteDoc(journalRef)
+}
+
+// ============================================================================
+// Query Helpers
+// ============================================================================
+
+/**
+ * Build a query for trades with filters
+ */
+export function buildTradesQuery(
+  userId: string,
+  portfolioId: string,
+  filters?: {
+    symbol?: string
+    type?: 'BUY' | 'SELL'
+    startDate?: Date
+    endDate?: Date
+  }
+): Query {
+  const tradesRef = getTradesCollection(userId, portfolioId)
+  const constraints: QueryConstraint[] = []
+
+  if (filters?.symbol) {
+    constraints.push(where('symbol', '==', filters.symbol))
+  }
+
+  if (filters?.type) {
+    constraints.push(where('type', '==', filters.type))
+  }
+
+  if (filters?.startDate) {
+    constraints.push(where('date', '>=', Timestamp.fromDate(filters.startDate)))
+  }
+
+  if (filters?.endDate) {
+    constraints.push(where('date', '<=', Timestamp.fromDate(filters.endDate)))
+  }
+
+  // Order by date descending (most recent first)
+  constraints.push(orderBy('date', 'desc'))
+
+  return query(tradesRef, ...constraints)
+}
+
+/**
+ * Build a query for journals with filters
+ */
+export function buildJournalsQuery(
+  userId: string,
+  portfolioId: string,
+  filters?: {
+    tradeId?: string
+    startDate?: Date
+    endDate?: Date
+  }
+): Query {
+  const journalsRef = getJournalsCollection(userId, portfolioId)
+  const constraints: QueryConstraint[] = []
+
+  if (filters?.tradeId) {
+    constraints.push(where('tradeId', '==', filters.tradeId))
+  }
+
+  if (filters?.startDate) {
+    constraints.push(
+      where('createdAt', '>=', Timestamp.fromDate(filters.startDate))
+    )
+  }
+
+  if (filters?.endDate) {
+    constraints.push(
+      where('createdAt', '<=', Timestamp.fromDate(filters.endDate))
+    )
+  }
+
+  // Order by creation date descending (most recent first)
+  constraints.push(orderBy('createdAt', 'desc'))
+
+  return query(journalsRef, ...constraints)
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+/**
+ * Convert Firestore Timestamp to Date
+ */
+export function timestampToDate(timestamp: Timestamp): Date {
+  return timestamp.toDate()
+}
+
+/**
+ * Convert Date to Firestore Timestamp
+ */
+export function dateToTimestamp(date: Date): Timestamp {
+  return Timestamp.fromDate(date)
+}
