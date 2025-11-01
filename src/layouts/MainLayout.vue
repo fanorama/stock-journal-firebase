@@ -1,10 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { usePortfoliosStore } from '@/stores'
+import PortfolioSelector from '@/components/portfolio/PortfolioSelector.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const portfoliosStore = usePortfoliosStore()
+
+/**
+ * Initialize portfolios on mount
+ */
+onMounted(() => {
+  portfoliosStore.initPortfolios()
+})
 
 // Sidebar state
 const isSidebarOpen = ref(false)
@@ -137,6 +147,10 @@ const isActiveRoute = (path: string) => {
 
           <!-- Header Actions Slot -->
           <div class="flex items-center gap-3">
+            <!-- Portfolio Selector -->
+            <PortfolioSelector />
+
+            <!-- Custom Actions from Pages -->
             <slot name="header-actions"></slot>
           </div>
         </div>
