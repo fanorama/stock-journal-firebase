@@ -1,0 +1,34 @@
+{
+    "mcpServers": {
+        "playwright": {
+            "command": "npx",
+            "args": [
+                "@playwright/mcp@latest"
+            ]
+        },
+        "sequential-thinking": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking"
+            ]
+        },
+        "todoist": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "todoist-mcp"
+            ],
+            "env": {
+                "API_KEY": "64dc8b7f34eabc110c1c3e63e87e75609f43756b"
+            }
+        },
+        "puppeteer": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-puppeteer"
+            ]
+        }
+    }
+}
