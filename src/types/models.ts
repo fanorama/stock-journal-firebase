@@ -302,3 +302,151 @@ export interface StrategyStats {
   totalPnL: number            // Total profit/loss from all trades
   totalPnLPercent: number
 }
+
+/**
+ * Watchlist Item Status
+ *
+ * Status lifecycle for watchlist items
+ */
+export const WATCHLIST_STATUS = {
+  PLANNED: 'planned',       // Initial state when added to watchlist
+  EXECUTED: 'executed',     // Item was traded (linked to actual trade)
+  SKIPPED: 'skipped',       // Valid setup but consciously skipped
+  MISSED: 'missed',         // Setup was good but missed opportunity
+} as const
+
+export type WatchlistStatus = typeof WATCHLIST_STATUS[keyof typeof WATCHLIST_STATUS]
+
+/**
+ * Daily Plan Status
+ *
+ * Lifecycle states for daily plans
+ */
+export const DAILY_PLAN_STATUS = {
+  DRAFT: 'draft',           // Plan being created/edited
+  ACTIVE: 'active',         // Plan ready for execution
+  COMPLETED: 'completed',   // Plan finished and reviewed
+} as const
+
+export type DailyPlanStatus = typeof DAILY_PLAN_STATUS[keyof typeof DAILY_PLAN_STATUS]
+
+/**
+ * Watchlist Item Interface
+ *
+ * Represents a single stock entry in the daily watchlist.
+ * Each item is tagged with a strategy and tracks execution status.
+ */
+export interface WatchlistItem {
+  id: string
+  symbol: string                  // Stock ticker (e.g., "BBCA", "TLKM")
+
+  // Strategy association
+  strategyId: string
+  strategyName: string            // Denormalized for display without lookup
+
+  // Planning notes
+  notes: string                   // Reasoning for watchlist inclusion
+  targetEntry?: number            // Optional target entry price
+  targetExit?: number             // Optional target exit price
+
+  // Execution tracking
+  status: WatchlistStatus
+  tradeId?: string                // Link to actual trade if executed
+  outcome?: {
+    actualEntry?: number
+    actualExit?: number
+    executedAt: Timestamp
+    notes: string
+  }
+
+  // Metadata
+  addedAt: Timestamp
+  position: number                // For ordering
+}
+
+/**
+ * Watchlist Item Create Input (without auto-generated fields)
+ */
+export interface WatchlistItemInput {
+  symbol: string
+  strategyId: string
+  strategyName: string
+  notes: string
+  targetEntry?: number
+  targetExit?: number
+}
+
+/**
+ * Checklist Item Interface
+ *
+ * Represents a single item in the pre-market checklist.
+ * Used for systematic preparation before trading.
+ */
+export interface ChecklistItem {
+  id: string
+  text: string                    // Checklist item description
+  completed: boolean
+  completedAt?: Timestamp
+  position: number                // For ordering
+  isTemplate: boolean             // true if from a template
+}
+
+/**
+ * Checklist Item Create Input (without auto-generated fields)
+ */
+export interface ChecklistItemInput {
+  text: string
+  isTemplate?: boolean
+}
+
+/**
+ * Review Data Interface
+ *
+ * Post-market review information for reflection and learning.
+ */
+export interface ReviewData {
+  notes: string                   // Overall day reflection
+  adherenceRate: number           // % of watchlist executed (0-100)
+  completedAt?: Timestamp
+}
+
+/**
+ * Daily Plan Document Interface
+ *
+ * Firestore path: users/{userId}/daily-plans/{planId}
+ *
+ * Represents a complete daily trading plan with watchlist, checklist, and review.
+ * Plan ID is date-based (YYYY-MM-DD) for easy querying.
+ */
+export interface DailyPlan {
+  id: string                      // Date string (YYYY-MM-DD)
+  userId: string
+  planDate: string                // ISO date string (YYYY-MM-DD)
+
+  // Watchlist items for trading
+  watchlist: WatchlistItem[]
+
+  // Pre-market checklist
+  checklist: ChecklistItem[]
+  checklistProgress: {
+    completed: number
+    total: number
+  }
+
+  // Post-market review
+  review: ReviewData
+
+  // Metadata
+  createdAt: Timestamp
+  updatedAt: Timestamp
+  status: DailyPlanStatus
+}
+
+/**
+ * Daily Plan Create Input (without auto-generated fields)
+ */
+export interface DailyPlanInput {
+  planDate: string
+  watchlist?: WatchlistItem[]
+  checklist?: ChecklistItem[]
+}

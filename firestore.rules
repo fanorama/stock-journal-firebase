@@ -110,6 +110,72 @@ service cloud.firestore {
       }
 
       // ==================================================
+      // DAILY PLANS SUBCOLLECTION
+      // Security rules for daily-plans/{planId}
+      // ==================================================
+
+      match /daily-plans/{planId} {
+        // Users can only access daily plans under their own user document
+        allow read: if isOwner(userId);
+
+        // Allow creating daily plan with required fields validation
+        allow create: if isOwner(userId)
+                      && hasRequiredField('id')
+                      && request.resource.data.id == planId
+                      // Validate planId matches date format (YYYY-MM-DD)
+                      && planId.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+                      && hasRequiredField('userId')
+                      && request.resource.data.userId == userId
+                      && hasRequiredField('planDate')
+                      && request.resource.data.planDate is string
+                      && request.resource.data.planDate == planId
+                      && hasRequiredField('watchlist')
+                      && request.resource.data.watchlist is list
+                      && hasRequiredField('checklist')
+                      && request.resource.data.checklist is list
+                      && hasRequiredField('checklistProgress')
+                      && request.resource.data.checklistProgress.keys().hasAll(['completed', 'total'])
+                      && request.resource.data.checklistProgress.completed is number
+                      && request.resource.data.checklistProgress.total is number
+                      && hasRequiredField('review')
+                      && request.resource.data.review.keys().hasAll(['notes', 'adherenceRate'])
+                      && request.resource.data.review.notes is string
+                      && request.resource.data.review.adherenceRate is number
+                      && hasRequiredField('status')
+                      && request.resource.data.status is string
+                      && request.resource.data.status in ['draft', 'active', 'completed']
+                      && hasRequiredField('createdAt')
+                      && isValidTimestamp(request.resource.data.createdAt)
+                      && hasRequiredField('updatedAt')
+                      && isValidTimestamp(request.resource.data.updatedAt);
+
+        // Allow updating daily plan
+        allow update: if isOwner(userId)
+                      && hasRequiredField('id')
+                      && request.resource.data.id == planId
+                      && hasRequiredField('userId')
+                      && request.resource.data.userId == userId
+                      && hasRequiredField('planDate')
+                      && request.resource.data.planDate is string
+                      && hasRequiredField('watchlist')
+                      && request.resource.data.watchlist is list
+                      && hasRequiredField('checklist')
+                      && request.resource.data.checklist is list
+                      && hasRequiredField('checklistProgress')
+                      && request.resource.data.checklistProgress.keys().hasAll(['completed', 'total'])
+                      && hasRequiredField('review')
+                      && request.resource.data.review.keys().hasAll(['notes', 'adherenceRate'])
+                      && hasRequiredField('status')
+                      && request.resource.data.status is string
+                      && request.resource.data.status in ['draft', 'active', 'completed']
+                      && hasRequiredField('updatedAt')
+                      && isValidTimestamp(request.resource.data.updatedAt);
+
+        // Allow deleting daily plan
+        allow delete: if isOwner(userId);
+      }
+
+      // ==================================================
       // PORTFOLIOS SUBCOLLECTION
       // Task 6.2: Security rules for portfolios/{portfolioId}
       // ==================================================

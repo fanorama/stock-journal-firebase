@@ -9,6 +9,7 @@ import {
   collection,
   doc,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   getDocs,
@@ -33,6 +34,8 @@ import type {
   JournalInput,
   Strategy,
   StrategyInput,
+  DailyPlan,
+  DailyPlanInput,
 } from '@/types'
 
 // ============================================================================
@@ -116,6 +119,48 @@ export function getStrategyDoc(
   strategyId: string
 ): DocumentReference {
   return doc(db, `users/${userId}/strategies/${strategyId}`)
+}
+
+/**
+ * Get daily-plans collection reference for a user
+ */
+export function getDailyPlansCollection(userId: string): CollectionReference {
+  return collection(db, `users/${userId}/daily-plans`)
+}
+
+/**
+ * Get specific daily plan document reference
+ * @param userId - User ID
+ * @param planId - Plan ID (date string in YYYY-MM-DD format)
+ */
+export function getDailyPlanDoc(
+  userId: string,
+  planId: string
+): DocumentReference {
+  return doc(db, `users/${userId}/daily-plans/${planId}`)
+}
+
+/**
+ * Get today's plan document reference
+ * Automatically generates planId from current date
+ */
+export function getTodaysPlanDoc(userId: string): DocumentReference {
+  const today = new Date()
+  const planId = formatDateToId(today)
+  return getDailyPlanDoc(userId, planId)
+}
+
+/**
+ * Get plan document reference for a specific date
+ * @param userId - User ID
+ * @param date - Date object or date string (YYYY-MM-DD)
+ */
+export function getDatePlanDoc(
+  userId: string,
+  date: Date | string
+): DocumentReference {
+  const planId = typeof date === 'string' ? date : formatDateToId(date)
+  return getDailyPlanDoc(userId, planId)
 }
 
 // ============================================================================
@@ -410,8 +455,90 @@ export function buildJournalsQuery(
 }
 
 // ============================================================================
+// Daily Plan Operations
+// ============================================================================
+
+/**
+ * Create a new daily plan
+ * @param userId - User ID
+ * @param input - Daily plan input data
+ * @returns The plan ID (date string)
+ */
+export async function createDailyPlan(
+  userId: string,
+  input: DailyPlanInput
+): Promise<string> {
+  const planId = input.planDate // Use date as ID (YYYY-MM-DD)
+  const planRef = getDailyPlanDoc(userId, planId)
+
+  await setDoc(planRef, {
+    id: planId,
+    userId,
+    planDate: input.planDate,
+    watchlist: input.watchlist || [],
+    checklist: input.checklist || [],
+    checklistProgress: {
+      completed: 0,
+      total: input.checklist?.length || 0,
+    },
+    review: {
+      notes: '',
+      adherenceRate: 0,
+    },
+    status: 'draft',
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+
+  return planId
+}
+
+/**
+ * Update an existing daily plan
+ * @param userId - User ID
+ * @param planId - Plan ID (date string)
+ * @param updates - Partial updates to the plan
+ */
+export async function updateDailyPlan(
+  userId: string,
+  planId: string,
+  updates: Partial<Omit<DailyPlan, 'id' | 'userId' | 'createdAt'>>
+): Promise<void> {
+  const planRef = getDailyPlanDoc(userId, planId)
+  await updateDoc(planRef, {
+    ...updates,
+    updatedAt: serverTimestamp(),
+  })
+}
+
+/**
+ * Delete a daily plan
+ * @param userId - User ID
+ * @param planId - Plan ID (date string)
+ */
+export async function deleteDailyPlan(
+  userId: string,
+  planId: string
+): Promise<void> {
+  const planRef = getDailyPlanDoc(userId, planId)
+  await deleteDoc(planRef)
+}
+
+// ============================================================================
 // Utility Functions
 // ============================================================================
+
+/**
+ * Format Date object to plan ID string (YYYY-MM-DD)
+ * @param date - Date object to format
+ * @returns Date string in YYYY-MM-DD format
+ */
+export function formatDateToId(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
 /**
  * Convert Firestore Timestamp to Date
