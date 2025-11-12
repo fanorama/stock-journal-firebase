@@ -2,7 +2,8 @@
 import { ref, computed, watch } from 'vue'
 import MainLayout from '@/layouts/MainLayout.vue'
 import WatchlistSection from '@/components/planner/WatchlistSection.vue'
-import type { WatchlistItem } from '@/types'
+import ChecklistSection from '@/components/planner/ChecklistSection.vue'
+import type { WatchlistItem, ChecklistItem } from '@/types'
 import { useDailyPlansStore } from '@/stores'
 import { formatDateToId } from '@/firebase/firestore'
 
@@ -144,6 +145,83 @@ const handleReorderWatchlist = async (items: WatchlistItem[]) => {
     console.error('Failed to reorder watchlist:', error)
   }
 }
+
+// Checklist actions
+const handleAddChecklistItem = async (text: string) => {
+  if (!currentPlan.value) return
+
+  try {
+    await dailyPlansStore.addChecklistItem(currentPlan.value.id, text)
+  } catch (error) {
+    console.error('Failed to add checklist item:', error)
+  }
+}
+
+const handleUpdateChecklistItem = async (itemId: string, completed: boolean) => {
+  if (!currentPlan.value) return
+
+  try {
+    await dailyPlansStore.updateChecklistItem(currentPlan.value.id, itemId, completed)
+  } catch (error) {
+    console.error('Failed to update checklist item:', error)
+  }
+}
+
+const handleUpdateChecklistItemText = async (itemId: string, text: string) => {
+  if (!currentPlan.value) return
+
+  try {
+    // Find the item and update with new text
+    const item = currentPlan.value.checklist.find((i) => i.id === itemId)
+    if (item) {
+      await dailyPlansStore.updateChecklistItem(currentPlan.value.id, itemId, item.completed, text)
+    }
+  } catch (error) {
+    console.error('Failed to update checklist item text:', error)
+  }
+}
+
+const handleDeleteChecklistItem = async (itemId: string) => {
+  if (!currentPlan.value) return
+
+  try {
+    await dailyPlansStore.deleteChecklistItem(currentPlan.value.id, itemId)
+  } catch (error) {
+    console.error('Failed to delete checklist item:', error)
+  }
+}
+
+const handleApplyChecklistTemplate = async (
+  items: Omit<ChecklistItem, 'id' | 'position'>[]
+) => {
+  if (!currentPlan.value) return
+
+  try {
+    // Add all template items
+    for (const item of items) {
+      await dailyPlansStore.addChecklistItem(
+        currentPlan.value.id,
+        item.text,
+        item.isTemplate
+      )
+    }
+  } catch (error) {
+    console.error('Failed to apply checklist template:', error)
+  }
+}
+
+const handleClearAllChecklist = async () => {
+  if (!currentPlan.value) return
+
+  try {
+    // Delete all checklist items
+    for (const item of currentPlan.value.checklist) {
+      await dailyPlansStore.deleteChecklistItem(currentPlan.value.id, item.id)
+    }
+  } catch (error) {
+    console.error('Failed to clear checklist:', error)
+  }
+}
 </script>
 
 <template>
@@ -254,24 +332,19 @@ const handleReorderWatchlist = async (items: WatchlistItem[]) => {
           @reorder="handleReorderWatchlist"
         />
 
-        <!-- Checklist Section Placeholder -->
-        <div
-          class="bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
-        >
-          <h3 class="text-xl font-bold uppercase text-[#0a0a0a] mb-4 tracking-wide">
-            ✅ Pre-Market Checklist
-          </h3>
-          <p class="text-[#525252] font-mono text-sm">
-            Checklist component will be added in Phase 2.4
-          </p>
-          <div class="mt-4 p-4 bg-[#fafafa] border-[3px] border-black">
-            <p class="font-mono text-xs text-[#525252]">
-              Progress: {{ currentPlan.checklistProgress.completed }}/{{
-                currentPlan.checklistProgress.total
-              }}
-            </p>
-          </div>
-        </div>
+        <!-- Checklist Section -->
+        <ChecklistSection
+          :plan-id="currentPlan.id"
+          :checklist="currentPlan.checklist"
+          :checklist-progress="currentPlan.checklistProgress"
+          :is-loading="false"
+          @add="handleAddChecklistItem"
+          @update="handleUpdateChecklistItem"
+          @update-text="handleUpdateChecklistItemText"
+          @delete="handleDeleteChecklistItem"
+          @apply-template="handleApplyChecklistTemplate"
+          @clear-all="handleClearAllChecklist"
+        />
 
         <!-- Review Section Placeholder -->
         <div
