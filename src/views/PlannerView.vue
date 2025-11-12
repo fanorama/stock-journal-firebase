@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import MainLayout from '@/layouts/MainLayout.vue'
+import WatchlistSection from '@/components/planner/WatchlistSection.vue'
+import type { WatchlistItem } from '@/types'
 import { useDailyPlansStore } from '@/stores'
 import { formatDateToId } from '@/firebase/firestore'
 
@@ -84,6 +86,64 @@ const planStatusBadge = computed(() => {
       return { text: 'Unknown', color: 'bg-gray-400' }
   }
 })
+
+// Watchlist actions
+const handleAddWatchlistItem = async (
+  item: Omit<WatchlistItem, 'id' | 'addedAt' | 'position'>
+) => {
+  if (!currentPlan.value) return
+
+  try {
+    await dailyPlansStore.addWatchlistItem(currentPlan.value.id, item)
+  } catch (error) {
+    console.error('Failed to add watchlist item:', error)
+  }
+}
+
+const handleUpdateWatchlistItem = async (
+  itemId: string,
+  updates: Partial<WatchlistItem>
+) => {
+  if (!currentPlan.value) return
+
+  try {
+    await dailyPlansStore.updateWatchlistItem(currentPlan.value.id, itemId, updates)
+  } catch (error) {
+    console.error('Failed to update watchlist item:', error)
+  }
+}
+
+const handleDeleteWatchlistItem = async (itemId: string) => {
+  if (!currentPlan.value) return
+
+  try {
+    await dailyPlansStore.deleteWatchlistItem(currentPlan.value.id, itemId)
+  } catch (error) {
+    console.error('Failed to delete watchlist item:', error)
+  }
+}
+
+const handleReorderWatchlist = async (items: WatchlistItem[]) => {
+  if (!currentPlan.value) return
+
+  try {
+    // Update position field for each item
+    const updatedItems = items.map((item, index) => ({
+      ...item,
+      position: index,
+    }))
+    // Use store method to update watchlist order
+    // Note: Store should have a method to update entire watchlist
+    // For now, we'll implement individual updates
+    for (const item of updatedItems) {
+      await dailyPlansStore.updateWatchlistItem(currentPlan.value.id, item.id, {
+        position: item.position,
+      })
+    }
+  } catch (error) {
+    console.error('Failed to reorder watchlist:', error)
+  }
+}
 </script>
 
 <template>
@@ -183,22 +243,16 @@ const planStatusBadge = computed(() => {
 
       <!-- Main Content -->
       <template v-else-if="currentPlan">
-        <!-- Watchlist Section Placeholder -->
-        <div
-          class="bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
-        >
-          <h3 class="text-xl font-bold uppercase text-[#0a0a0a] mb-4 tracking-wide">
-            📋 Watchlist
-          </h3>
-          <p class="text-[#525252] font-mono text-sm">
-            Watchlist component will be added in Phase 2.3
-          </p>
-          <div class="mt-4 p-4 bg-[#fafafa] border-[3px] border-black">
-            <p class="font-mono text-xs text-[#525252]">
-              Items in watchlist: {{ currentPlan.watchlist.length }}
-            </p>
-          </div>
-        </div>
+        <!-- Watchlist Section -->
+        <WatchlistSection
+          :plan-id="currentPlan.id"
+          :watchlist="currentPlan.watchlist"
+          :is-loading="false"
+          @add="handleAddWatchlistItem"
+          @update="handleUpdateWatchlistItem"
+          @delete="handleDeleteWatchlistItem"
+          @reorder="handleReorderWatchlist"
+        />
 
         <!-- Checklist Section Placeholder -->
         <div
