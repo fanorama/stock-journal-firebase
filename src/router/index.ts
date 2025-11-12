@@ -59,6 +59,12 @@ const protectedRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/StrategiesView.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/planner',
+    name: 'planner',
+    component: () => import('@/views/PlannerView.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({
