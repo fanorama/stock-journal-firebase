@@ -58,6 +58,58 @@ service cloud.firestore {
       allow delete: if false;
 
       // ==================================================
+      // STRATEGIES SUBCOLLECTION
+      // Security rules for strategies/{strategyId}
+      // ==================================================
+
+      match /strategies/{strategyId} {
+        // Users can only access strategies under their own user document
+        allow read: if isOwner(userId);
+
+        // Allow creating strategy with required fields validation
+        allow create: if isOwner(userId)
+                      && hasRequiredField('userId')
+                      && request.resource.data.userId == userId
+                      && hasRequiredField('name')
+                      && request.resource.data.name is string
+                      && request.resource.data.name.size() > 0
+                      && request.resource.data.name.size() <= 100
+                      && hasRequiredField('entryRules')
+                      && request.resource.data.entryRules is list
+                      && hasRequiredField('exitRules')
+                      && request.resource.data.exitRules is list
+                      && hasRequiredField('createdAt')
+                      && isValidTimestamp(request.resource.data.createdAt)
+                      && hasRequiredField('updatedAt')
+                      && isValidTimestamp(request.resource.data.updatedAt)
+                      // Validate optional description field if present
+                      && (!('description' in request.resource.data) || (request.resource.data.description is string && request.resource.data.description.size() <= 500))
+                      // Validate optional tags field if present (array of strings, max 10 tags)
+                      && (!('tags' in request.resource.data) || (request.resource.data.tags is list && request.resource.data.tags.size() <= 10));
+
+        // Allow updating strategy
+        allow update: if isOwner(userId)
+                      && hasRequiredField('userId')
+                      && request.resource.data.userId == userId
+                      && hasRequiredField('name')
+                      && request.resource.data.name is string
+                      && request.resource.data.name.size() > 0
+                      && request.resource.data.name.size() <= 100
+                      && hasRequiredField('entryRules')
+                      && request.resource.data.entryRules is list
+                      && hasRequiredField('exitRules')
+                      && request.resource.data.exitRules is list
+                      && hasRequiredField('updatedAt')
+                      && isValidTimestamp(request.resource.data.updatedAt)
+                      // Validate optional fields if present
+                      && (!('description' in request.resource.data) || (request.resource.data.description is string && request.resource.data.description.size() <= 500))
+                      && (!('tags' in request.resource.data) || (request.resource.data.tags is list && request.resource.data.tags.size() <= 10));
+
+        // Allow deleting strategy
+        allow delete: if isOwner(userId);
+      }
+
+      // ==================================================
       // PORTFOLIOS SUBCOLLECTION
       // Task 6.2: Security rules for portfolios/{portfolioId}
       // ==================================================
@@ -140,7 +192,9 @@ service cloud.firestore {
                         // Validate optional fees field if present
                         && (!('fees' in request.resource.data) || (request.resource.data.fees is number && request.resource.data.fees >= 0))
                         // Validate optional notes field if present
-                        && (!('notes' in request.resource.data) || (request.resource.data.notes is string && request.resource.data.notes.size() <= 1000));
+                        && (!('notes' in request.resource.data) || (request.resource.data.notes is string && request.resource.data.notes.size() <= 1000))
+                        // Validate optional strategyId field if present
+                        && (!('strategyId' in request.resource.data) || request.resource.data.strategyId is string);
 
           // Allow updating trade
           allow update: if isOwner(userId)
@@ -165,7 +219,8 @@ service cloud.firestore {
                         && isValidTimestamp(request.resource.data.updatedAt)
                         // Validate optional fields if present
                         && (!('fees' in request.resource.data) || (request.resource.data.fees is number && request.resource.data.fees >= 0))
-                        && (!('notes' in request.resource.data) || (request.resource.data.notes is string && request.resource.data.notes.size() <= 1000));
+                        && (!('notes' in request.resource.data) || (request.resource.data.notes is string && request.resource.data.notes.size() <= 1000))
+                        && (!('strategyId' in request.resource.data) || request.resource.data.strategyId is string);
 
           // Allow deleting trade
           allow delete: if isOwner(userId);

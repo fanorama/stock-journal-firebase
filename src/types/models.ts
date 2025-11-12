@@ -49,6 +49,7 @@ export interface Trade {
   date: Timestamp       // Trade execution date
   fees?: number         // Transaction fees (broker commission, tax, etc.)
   notes?: string        // Quick notes about the trade
+  strategyId?: string   // Optional reference to a strategy
   createdAt: Timestamp
   updatedAt: Timestamp
 }
@@ -66,6 +67,7 @@ export interface TradeInput {
   date: Date | Timestamp
   fees?: number
   notes?: string
+  strategyId?: string
 }
 
 /**
@@ -187,3 +189,116 @@ export const CURRENCIES = {
 } as const
 
 export type Currency = typeof CURRENCIES[keyof typeof CURRENCIES]
+
+/**
+ * Strategy Rule Types
+ */
+export const RULE_TYPES = {
+  CHECKLIST: 'CHECKLIST',     // Simple checklist item
+  CONDITION: 'CONDITION',     // Logical condition with field, operator, value
+  TEMPLATE: 'TEMPLATE',       // Structured template with category
+} as const
+
+export type RuleType = typeof RULE_TYPES[keyof typeof RULE_TYPES]
+
+/**
+ * Rule Logical Operators for chaining conditions
+ */
+export const LOGICAL_OPERATORS = {
+  AND: 'AND',
+  OR: 'OR',
+} as const
+
+export type LogicalOperator = typeof LOGICAL_OPERATORS[keyof typeof LOGICAL_OPERATORS]
+
+/**
+ * Rule Comparison Operators
+ */
+export const COMPARISON_OPERATORS = {
+  LESS_THAN: '<',
+  GREATER_THAN: '>',
+  LESS_THAN_OR_EQUAL: '<=',
+  GREATER_THAN_OR_EQUAL: '>=',
+  EQUALS: '==',
+  NOT_EQUALS: '!=',
+} as const
+
+export type ComparisonOperator = typeof COMPARISON_OPERATORS[keyof typeof COMPARISON_OPERATORS]
+
+/**
+ * Strategy Rule Interface
+ *
+ * Represents a single rule within a trading strategy.
+ * Rules can be of different types: checklist, condition, or template.
+ */
+export interface StrategyRule {
+  id: string
+  type: RuleType
+  description: string
+
+  // For CHECKLIST type
+  checked?: boolean
+
+  // For CONDITION type
+  field?: string               // e.g., 'RSI', 'Volume', 'Price', 'MACD'
+  operator?: ComparisonOperator
+  value?: string | number
+  logicalOp?: LogicalOperator  // For chaining multiple conditions
+
+  // For TEMPLATE type
+  category?: string            // e.g., 'Technical', 'Fundamental', 'Risk Management'
+  templateData?: Record<string, any>
+}
+
+/**
+ * Strategy Document Interface
+ *
+ * Firestore path: users/{userId}/strategies/{strategyId}
+ *
+ * Represents a trading strategy with entry and exit rules.
+ * Strategies are global (not tied to a specific portfolio).
+ */
+export interface Strategy {
+  id: string
+  userId: string
+  name: string
+  description?: string
+  entryRules: StrategyRule[]
+  exitRules: StrategyRule[]
+  tags?: string[]
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+/**
+ * Strategy Create Input (without auto-generated fields)
+ * Used when creating a new strategy
+ */
+export interface StrategyInput {
+  name: string
+  description?: string
+  entryRules: StrategyRule[]
+  exitRules: StrategyRule[]
+  tags?: string[]
+}
+
+/**
+ * Strategy Statistics (computed)
+ *
+ * Performance statistics for a specific strategy.
+ * Calculated client-side from trades linked to this strategy.
+ */
+export interface StrategyStats {
+  strategyId: string
+  totalTrades: number
+  winningTrades: number
+  losingTrades: number
+  winRate: number             // Percentage of winning trades
+  profitFactor: number        // Total gains / Total losses
+  averageGain: number
+  averageLoss: number
+  largestWin: number
+  largestLoss: number
+  totalPnL: number            // Total profit/loss from all trades
+  totalPnLPercent: number
+}

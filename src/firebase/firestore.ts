@@ -31,6 +31,8 @@ import type {
   TradeInput,
   Journal,
   JournalInput,
+  Strategy,
+  StrategyInput,
 } from '@/types'
 
 // ============================================================================
@@ -97,6 +99,23 @@ export function getJournalDoc(
     db,
     `users/${userId}/portfolios/${portfolioId}/journals/${journalId}`
   )
+}
+
+/**
+ * Get strategies collection reference for a user
+ */
+export function getStrategiesCollection(userId: string): CollectionReference {
+  return collection(db, `users/${userId}/strategies`)
+}
+
+/**
+ * Get specific strategy document reference
+ */
+export function getStrategyDoc(
+  userId: string,
+  strategyId: string
+): DocumentReference {
+  return doc(db, `users/${userId}/strategies/${strategyId}`)
 }
 
 // ============================================================================
@@ -259,6 +278,56 @@ export async function deleteJournal(
 ): Promise<void> {
   const journalRef = getJournalDoc(userId, portfolioId, journalId)
   await deleteDoc(journalRef)
+}
+
+// ============================================================================
+// Strategy Operations
+// ============================================================================
+
+/**
+ * Create a new strategy
+ */
+export async function createStrategy(
+  userId: string,
+  input: StrategyInput
+): Promise<string> {
+  const strategiesRef = getStrategiesCollection(userId)
+  const docRef = await addDoc(strategiesRef, {
+    ...input,
+    userId,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  })
+  return docRef.id
+}
+
+/**
+ * Update an existing strategy
+ */
+export async function updateStrategy(
+  userId: string,
+  strategyId: string,
+  updates: Partial<StrategyInput>
+): Promise<void> {
+  const strategyRef = getStrategyDoc(userId, strategyId)
+  await updateDoc(strategyRef, {
+    ...updates,
+    updatedAt: serverTimestamp(),
+  })
+}
+
+/**
+ * Delete a strategy
+ * Note: This does not delete strategyId references in trades.
+ * Trades with deleted strategy will have orphaned strategyId.
+ * UI layer should handle this gracefully.
+ */
+export async function deleteStrategy(
+  userId: string,
+  strategyId: string
+): Promise<void> {
+  const strategyRef = getStrategyDoc(userId, strategyId)
+  await deleteDoc(strategyRef)
 }
 
 // ============================================================================

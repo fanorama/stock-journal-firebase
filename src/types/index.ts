@@ -10,7 +10,14 @@ export type {
   Position,
   ClosedTrade,
   PortfolioStats,
+  Strategy,
+  StrategyInput,
+  StrategyRule,
+  StrategyStats,
+  RuleType,
+  ComparisonOperator,
+  LogicalOperator,
   MarketType,
   Currency,
 } from './models'
-export { MARKET_TYPES, CURRENCIES } from './models'
+export { MARKET_TYPES, CURRENCIES, RULE_TYPES, COMPARISON_OPERATORS, LOGICAL_OPERATORS } from './models'

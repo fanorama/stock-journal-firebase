@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import type { TradeInput } from '@/types'
 import { useTradesStore } from '@/stores'
 import { usePortfoliosStore } from '@/stores'
+import StrategySelector from '@/components/strategy/StrategySelector.vue'
 
 interface Props {
   show: boolean
@@ -27,6 +28,7 @@ const formData = ref<Omit<TradeInput, 'portfolioId'>>({
   date: new Date(),
   fees: 0,
   notes: '',
+  strategyId: undefined,
 })
 
 // Validation errors
@@ -441,6 +443,9 @@ const formatNumber = (value: number): string => {
                 {{ (formData.notes || '').length }}/500 karakter
               </p>
             </div>
+
+            <!-- Strategy Selector -->
+            <StrategySelector v-model="formData.strategyId" />
           </form>
         </div>
 

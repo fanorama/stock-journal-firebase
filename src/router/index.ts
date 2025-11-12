@@ -53,6 +53,12 @@ const protectedRoutes: RouteRecordRaw[] = [
     component: () => import('@/views/JournalsView.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/strategies',
+    name: 'strategies',
+    component: () => import('@/views/StrategiesView.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

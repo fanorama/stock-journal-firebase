@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue'
 import type { Trade, TradeInput } from '@/types'
 import { useTradesStore } from '@/stores'
 import { usePortfoliosStore } from '@/stores'
+import StrategySelector from '@/components/strategy/StrategySelector.vue'
 
 interface Props {
   show: boolean
@@ -452,6 +453,9 @@ const formatNumber = (value: number): string => {
                 {{ (formData.notes || '').length }}/500 karakter
               </p>
             </div>
+
+            <!-- Strategy Selector -->
+            <StrategySelector v-model="formData.strategyId" />
           </form>
         </div>
 
