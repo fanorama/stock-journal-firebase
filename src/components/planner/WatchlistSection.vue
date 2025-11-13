@@ -53,11 +53,11 @@ const handleReorder = (items: WatchlistItem[]) => {
 </script>
 
 <template>
-  <div class="watchlist-section bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+  <div class="watchlist-section bg-white border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
     <!-- Section Header -->
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h3 class="text-xl font-bold uppercase text-[#0a0a0a] tracking-wide">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4">
+      <div class="flex-1">
+        <h3 class="text-lg sm:text-xl lg:text-2xl font-bold uppercase text-[#0a0a0a] tracking-wide">
           📋 Watchlist
         </h3>
         <p class="text-xs font-mono text-[#525252] mt-1">
@@ -67,7 +67,7 @@ const handleReorder = (items: WatchlistItem[]) => {
 
       <!-- Add Button -->
       <button
-        class="bg-[#3b82f6] border-[3px] border-black px-4 py-2 font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+        class="bg-[#3b82f6] border-[3px] border-black px-4 py-3 min-h-[44px] font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all duration-100 touch-manipulation w-full sm:w-auto"
         @click="showAddModal = true"
       >
         + Add Stock

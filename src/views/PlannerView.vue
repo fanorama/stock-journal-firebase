@@ -339,7 +339,7 @@ const handleCompletePlan = async () => {
     <template #header-actions>
       <button
         v-if="!isToday"
-        class="bg-[#3b82f6] border-[3px] border-black px-4 py-2 font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+        class="bg-[#3b82f6] border-[3px] border-black px-4 py-2 min-h-[44px] font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation"
         @click="goToToday"
       >
         Today
@@ -387,7 +387,7 @@ const handleCompletePlan = async () => {
 
           <!-- Next Day Button - Desktop Only -->
           <button
-            class="hidden sm:block bg-[#fafafa] border-[3px] border-black px-4 py-2 font-bold text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 order-3"
+            class="hidden sm:block bg-[#fafafa] border-[3px] border-black px-4 py-2 min-h-[44px] font-bold text-sm sm:text-base text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation order-3"
             @click="goToNextDay"
           >
             Next →

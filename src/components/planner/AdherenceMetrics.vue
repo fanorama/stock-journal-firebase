@@ -33,9 +33,9 @@ const progressWidth = computed(() => {
 </script>
 
 <template>
-  <div class="adherence-metrics mb-6">
+  <div class="adherence-metrics mb-4 sm:mb-6">
     <!-- Main Adherence Rate Display -->
-    <div class="mb-4">
+    <div class="mb-3 sm:mb-4">
       <div class="flex items-center justify-between mb-2">
         <h4 class="text-sm font-bold uppercase text-[#0a0a0a] tracking-wide">
           Adherence Rate
@@ -79,7 +79,7 @@ const progressWidth = computed(() => {
     </div>
 
     <!-- Detailed Metrics Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
       <!-- Executed -->
       <div class="bg-[#d1fae5] border-[3px] border-black p-3">
         <div class="flex items-center justify-between">

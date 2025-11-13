@@ -125,11 +125,11 @@ const handleCompletePlan = () => {
 </script>
 
 <template>
-  <div class="review-section bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+  <div class="review-section bg-white border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
     <!-- Section Header -->
-    <div class="flex items-start justify-between mb-6">
-      <div>
-        <h3 class="text-xl font-bold uppercase text-[#0a0a0a] tracking-wide">
+    <div class="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-3 mb-4">
+      <div class="flex-1">
+        <h3 class="text-lg sm:text-xl lg:text-2xl font-bold uppercase text-[#0a0a0a] tracking-wide">
           📝 Post-Market Review
         </h3>
         <p class="text-xs font-mono text-[#525252] mt-1">
@@ -165,7 +165,7 @@ const handleCompletePlan = () => {
     <!-- Perfect Adherence Celebration -->
     <div
       v-if="adherenceMetrics.adherenceRate === 100 && adherenceMetrics.decided > 0"
-      class="mb-6 bg-[#fef3c7] border-[3px] border-black p-4 animate-pulse"
+      class="mb-4 sm:mb-6 bg-[#fef3c7] border-[3px] border-black p-4 animate-pulse"
     >
       <div class="flex items-center gap-3">
         <svg
@@ -194,7 +194,7 @@ const handleCompletePlan = () => {
     </div>
 
     <!-- Linked Trades Summary -->
-    <div v-if="linkedTrades > 0" class="mb-6 bg-[#dbeafe] border-[3px] border-black p-4">
+    <div v-if="linkedTrades > 0" class="mb-4 sm:mb-6 bg-[#dbeafe] border-[3px] border-black p-4">
       <div class="flex items-center gap-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -227,9 +227,9 @@ const handleCompletePlan = () => {
     />
 
     <!-- Complete Plan Button -->
-    <div v-if="canCompletePlan" class="mt-6 pt-6 border-t-[3px] border-black">
+    <div v-if="canCompletePlan" class="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-[3px] border-black">
       <button
-        class="w-full bg-[#10b981] border-[3px] border-black px-6 py-4 font-bold uppercase text-lg tracking-wide text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-100"
+        class="w-full bg-[#10b981] border-[3px] border-black px-6 py-4 min-h-[44px] font-bold uppercase text-sm sm:text-base lg:text-lg tracking-wide text-white shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 touch-manipulation"
         @click="handleCompletePlan"
       >
         ✓ Complete Plan
@@ -240,7 +240,7 @@ const handleCompletePlan = () => {
     </div>
 
     <!-- Completed Message -->
-    <div v-else-if="status === 'completed'" class="mt-6 pt-6 border-t-[3px] border-black">
+    <div v-else-if="status === 'completed'" class="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t-[3px] border-black">
       <div class="bg-[#d1fae5] border-[3px] border-black p-6 text-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -142,13 +142,13 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
 </script>
 
 <template>
-  <div class="watchlist-item-row bg-white hover:bg-[#fafafa] transition-colors">
+  <div class="watchlist-item-row bg-white hover:bg-[#fafafa] transition-colors border-b-[3px] border-black last:border-b-0">
     <!-- Main Row Content - Desktop Grid / Mobile Card -->
-    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 px-4 py-4 items-start sm:items-center">
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 px-3 sm:px-4 py-3 sm:py-4 items-start sm:items-center">
       <!-- Drag Handle + Symbol -->
       <div class="sm:col-span-2 flex items-center gap-2">
         <button
-          class="drag-handle cursor-move p-1 hover:bg-[#fafafa] border-[2px] border-transparent hover:border-black transition-colors touch-manipulation"
+          class="drag-handle cursor-move p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[#fafafa] border-[2px] border-transparent hover:border-black transition-colors touch-manipulation"
           title="Drag to reorder"
         >
           <svg
@@ -157,7 +157,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-5 h-5 sm:w-4 sm:h-4 text-[#737373]"
+            class="w-5 h-5 text-[#737373]"
           >
             <path
               stroke-linecap="round"
@@ -222,7 +222,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
       <div class="sm:col-span-1 flex gap-2 justify-start sm:justify-center flex-wrap">
         <!-- Expand/Collapse Button -->
         <button
-          class="p-2 sm:p-1 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 border-[2px] border-black hover:bg-[#fafafa] transition-colors touch-manipulation"
+          class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center border-[2px] border-black hover:bg-[#fafafa] active:bg-[#e5e5e5] transition-colors touch-manipulation"
           :title="isExpanded ? 'Collapse' : 'Expand'"
           @click="$emit('toggleExpand')"
         >
@@ -232,7 +232,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-5 h-5 sm:w-4 sm:h-4 transition-transform mx-auto"
+            class="w-5 h-5 transition-transform"
             :class="{ 'rotate-180': isExpanded }"
           >
             <path
@@ -246,7 +246,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
         <!-- Create Trade Button (only show if status is 'planned') -->
         <button
           v-if="item.status === 'planned'"
-          class="p-2 sm:p-1 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 border-[2px] border-black hover:bg-[#10b981] hover:text-white transition-colors touch-manipulation"
+          class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center border-[2px] border-black hover:bg-[#10b981] hover:text-white active:bg-[#059669] transition-colors touch-manipulation"
           title="Create Trade"
           @click="handleCreateTrade"
         >
@@ -256,7 +256,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-5 h-5 sm:w-4 sm:h-4 mx-auto"
+            class="w-5 h-5"
           >
             <path
               stroke-linecap="round"
@@ -268,7 +268,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
 
         <!-- Edit Button -->
         <button
-          class="p-1 border-[2px] border-black hover:bg-[#3b82f6] hover:text-white transition-colors"
+          class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center border-[2px] border-black hover:bg-[#3b82f6] hover:text-white active:bg-[#2563eb] transition-colors touch-manipulation"
           title="Edit"
           @click="showEditModal = true"
         >
@@ -278,7 +278,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-4 h-4"
+            class="w-5 h-5"
           >
             <path
               stroke-linecap="round"
@@ -290,7 +290,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
 
         <!-- Delete Button -->
         <button
-          class="p-1 border-[2px] border-black hover:bg-[#ef4444] hover:text-white transition-colors"
+          class="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center border-[2px] border-black hover:bg-[#ef4444] hover:text-white active:bg-[#dc2626] transition-colors touch-manipulation"
           title="Delete"
           @click="showDeleteConfirm = true"
         >
