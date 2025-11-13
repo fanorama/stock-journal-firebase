@@ -58,6 +58,36 @@ const canCompletePlan = computed(() => {
 })
 
 /**
+ * Pre-completion validation errors
+ */
+const validationErrors = computed(() => {
+  const errors: string[] = []
+
+  // Check for watchlist items still in "planned" status
+  const plannedCount = adherenceMetrics.value.planned
+  if (plannedCount > 0) {
+    errors.push(
+      `${plannedCount} watchlist item${plannedCount > 1 ? 's' : ''} masih berstatus "Planned". Mark sebagai Executed/Skipped/Missed terlebih dahulu.`
+    )
+  }
+
+  // Check for empty review notes
+  const notes = props.review.notes.trim()
+  if (!notes || notes.length === 0) {
+    errors.push('Review notes masih kosong. Tulis refleksi tentang execution hari ini.')
+  }
+
+  return errors
+})
+
+/**
+ * Has validation errors
+ */
+const hasValidationErrors = computed(() => {
+  return validationErrors.value.length > 0
+})
+
+/**
  * Handle update review notes
  */
 const handleUpdateNotes = (notes: string) => {
@@ -65,10 +95,24 @@ const handleUpdateNotes = (notes: string) => {
 }
 
 /**
- * Handle complete plan
+ * Handle complete plan with pre-completion validation
  */
 const handleCompletePlan = () => {
   if (!canCompletePlan.value) return
+
+  // Pre-completion validation
+  if (hasValidationErrors.value) {
+    const errorMessage = [
+      '⚠️ Plan belum bisa di-complete:',
+      '',
+      ...validationErrors.value.map((err, idx) => `${idx + 1}. ${err}`),
+      '',
+      'Selesaikan semua hal di atas terlebih dahulu.',
+    ].join('\n')
+
+    alert(errorMessage)
+    return
+  }
 
   const confirmed = confirm(
     'Mark plan sebagai completed? Kamu tidak bisa edit watchlist/checklist setelah plan completed.'
@@ -117,6 +161,37 @@ const handleCompletePlan = () => {
       :planned="adherenceMetrics.planned"
       :adherence-rate="adherenceMetrics.adherenceRate"
     />
+
+    <!-- Perfect Adherence Celebration -->
+    <div
+      v-if="adherenceMetrics.adherenceRate === 100 && adherenceMetrics.decided > 0"
+      class="mb-6 bg-[#fef3c7] border-[3px] border-black p-4 animate-pulse"
+    >
+      <div class="flex items-center gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-6 h-6 text-[#f59e0b] flex-shrink-0"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+          />
+        </svg>
+        <div>
+          <p class="font-bold text-sm uppercase text-[#f59e0b] tracking-wide">
+            ⭐ Perfect Adherence!
+          </p>
+          <p class="text-xs font-mono text-[#0a0a0a]">
+            100% adherence rate - kamu execute semua plan yang sudah dibuat!
+          </p>
+        </div>
+      </div>
+    </div>
 
     <!-- Linked Trades Summary -->
     <div v-if="linkedTrades > 0" class="mb-6 bg-[#dbeafe] border-[3px] border-black p-4">

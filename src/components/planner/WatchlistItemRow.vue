@@ -88,8 +88,27 @@ const handleDelete = () => {
   <div class="watchlist-item-row bg-white hover:bg-[#fafafa] transition-colors">
     <!-- Main Row Content -->
     <div class="grid grid-cols-12 gap-3 px-4 py-4 items-center">
-      <!-- Symbol -->
-      <div class="col-span-2">
+      <!-- Drag Handle -->
+      <div class="col-span-2 flex items-center gap-2">
+        <button
+          class="drag-handle cursor-move p-1 hover:bg-[#fafafa] border-[2px] border-transparent hover:border-black transition-colors"
+          title="Drag to reorder"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            class="w-4 h-4 text-[#737373]"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+            />
+          </svg>
+        </button>
         <p class="font-bold text-lg text-[#0a0a0a] uppercase">
           {{ item.symbol }}
         </p>
@@ -260,7 +279,7 @@ const handleDelete = () => {
     <Teleport to="body">
       <div
         v-if="showDeleteConfirm"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
         @click.self="showDeleteConfirm = false"
       >
         <div class="bg-white border-[5px] border-black p-6 max-w-md shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">

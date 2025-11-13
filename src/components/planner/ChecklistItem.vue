@@ -105,6 +105,27 @@ const handleKeydown = (event: KeyboardEvent) => {
     class="checklist-item flex items-start gap-3 bg-[#fafafa] border-[3px] border-black p-3 hover:bg-white transition-colors"
     :class="{ 'opacity-60': item.completed }"
   >
+    <!-- Drag Handle -->
+    <button
+      class="drag-handle cursor-move p-1 hover:bg-white border-[2px] border-transparent hover:border-black transition-colors flex-shrink-0 mt-0.5"
+      title="Drag to reorder"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="w-4 h-4 text-[#737373]"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+        />
+      </svg>
+    </button>
+
     <!-- Checkbox -->
     <button
       class="flex-shrink-0 w-6 h-6 border-[3px] border-black flex items-center justify-center transition-colors mt-0.5"
@@ -148,7 +169,7 @@ const handleKeydown = (event: KeyboardEvent) => {
         ref="editInput"
         v-model="editText"
         type="text"
-        class="w-full border-[2px] border-black p-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
+        class="w-full border-[2px] border-black p-2 font-mono text-sm text-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
         maxlength="200"
         @blur="saveEdit"
         @keydown="handleKeydown"
@@ -222,7 +243,7 @@ const handleKeydown = (event: KeyboardEvent) => {
     <Teleport to="body">
       <div
         v-if="showDeleteConfirm"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
         @click.self="showDeleteConfirm = false"
       >
         <div class="bg-white border-[5px] border-black p-6 max-w-sm shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">

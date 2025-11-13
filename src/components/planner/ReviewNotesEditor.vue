@@ -77,7 +77,7 @@ const getCharCountColor = () => {
       v-model="localNotes"
       :readonly="isReadonly"
       :maxlength="MAX_CHARS"
-      class="w-full min-h-[200px] p-4 border-[3px] border-black font-mono text-sm text-[#0a0a0a] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] resize-y transition-colors"
+      class="w-full min-h-[200px] p-4 border-[3px] border-black font-mono text-sm text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] resize-y transition-colors"
       :class="{
         'bg-white': !isReadonly,
         'bg-[#fafafa] cursor-not-allowed': isReadonly,

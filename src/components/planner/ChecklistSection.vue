@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import type { ChecklistItem } from '@/types'
 import ChecklistItemComponent from './ChecklistItem.vue'
 import ChecklistTemplateSelector from './ChecklistTemplateSelector.vue'
+import draggable from 'vuedraggable'
 
 interface Props {
   planId: string
@@ -31,6 +32,14 @@ const newItemText = ref('')
 
 // Template selector state
 const showTemplateSelector = ref(false)
+
+// Local draggable list
+const localChecklist = computed({
+  get: () => props.checklist,
+  set: (value) => {
+    emit('reorder', value)
+  },
+})
 
 /**
  * Calculate completion percentage
@@ -155,6 +164,37 @@ const handleClearAll = () => {
       </div>
     </div>
 
+    <!-- 100% Completion Celebration -->
+    <div
+      v-if="completionPercentage === 100 && checklistProgress.total > 0"
+      class="mb-4 bg-[#d1fae5] border-[3px] border-black p-4 animate-pulse"
+    >
+      <div class="flex items-center gap-3">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="2"
+          stroke="currentColor"
+          class="w-6 h-6 text-[#10b981] flex-shrink-0"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+          />
+        </svg>
+        <div>
+          <p class="font-bold text-sm uppercase text-[#10b981] tracking-wide">
+            🎉 Checklist Complete!
+          </p>
+          <p class="text-xs font-mono text-[#0a0a0a]">
+            Semua checklist items sudah selesai. Siap execute!
+          </p>
+        </div>
+      </div>
+    </div>
+
     <!-- Checklist Items -->
     <div class="space-y-2 mb-4">
       <!-- Empty State -->
@@ -184,15 +224,25 @@ const handleClearAll = () => {
         </p>
       </div>
 
-      <!-- Checklist Items List -->
-      <ChecklistItemComponent
-        v-for="item in checklist"
-        :key="item.id"
-        :item="item"
-        @toggle="handleToggle"
-        @update-text="handleUpdateText"
-        @delete="handleDelete"
-      />
+      <!-- Checklist Items List with Drag-and-Drop -->
+      <draggable
+        v-if="checklist && checklist.length > 0"
+        v-model="localChecklist"
+        item-key="id"
+        class="space-y-2"
+        handle=".drag-handle"
+        :animation="200"
+        ghost-class="ghost-checklist"
+      >
+        <template #item="{ element: item }">
+          <ChecklistItemComponent
+            :item="item"
+            @toggle="handleToggle"
+            @update-text="handleUpdateText"
+            @delete="handleDelete"
+          />
+        </template>
+      </draggable>
     </div>
 
     <!-- Add New Item Input -->
@@ -202,7 +252,7 @@ const handleClearAll = () => {
           v-model="newItemText"
           type="text"
           placeholder="Add new checklist item..."
-          class="flex-1 border-[3px] border-black p-3 font-mono text-sm focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
+          class="flex-1 border-[3px] border-black p-3 font-mono text-sm text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
           maxlength="200"
         />
         <button
@@ -226,3 +276,11 @@ const handleClearAll = () => {
     />
   </div>
 </template>
+
+<style scoped>
+/* Drag-and-drop ghost effect */
+:deep(.ghost-checklist) {
+  opacity: 0.5;
+  background: #dbeafe;
+}
+</style>

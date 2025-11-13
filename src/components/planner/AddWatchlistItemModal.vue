@@ -165,7 +165,7 @@ const handleClose = () => {
   <Teleport to="body">
     <div
       v-if="show"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto"
+      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto"
       @click.self="handleClose"
     >
       <div
@@ -204,7 +204,7 @@ const handleClose = () => {
               v-model="formData.symbol"
               type="text"
               placeholder="e.g., BBCA, BMRI, TLKM"
-              class="w-full border-[3px] border-black p-3 font-mono uppercase focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
+              class="w-full border-[3px] border-black p-3 font-mono uppercase text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
               :class="{ 'border-[#ef4444]': errors.symbol }"
             />
             <p v-if="errors.symbol" class="text-xs text-[#ef4444] font-mono mt-1">
@@ -219,7 +219,7 @@ const handleClose = () => {
             </label>
             <select
               v-model="formData.strategyId"
-              class="w-full border-[3px] border-black p-3 font-mono focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all bg-white"
+              class="w-full border-[3px] border-black p-3 font-mono text-[#0a0a0a] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all bg-white"
               :class="{ 'border-[#ef4444]': errors.strategyId }"
             >
               <option value="">Pilih Strategy</option>
@@ -274,7 +274,7 @@ const handleClose = () => {
               v-model="formData.notes"
               rows="3"
               placeholder="Why this stock matches the strategy? Key levels to watch?"
-              class="w-full border-[3px] border-black p-3 font-mono focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all resize-none"
+              class="w-full border-[3px] border-black p-3 font-mono text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all resize-none"
               :class="{ 'border-[#ef4444]': errors.notes }"
             ></textarea>
             <p v-if="errors.notes" class="text-xs text-[#ef4444] font-mono mt-1">
@@ -297,7 +297,7 @@ const handleClose = () => {
                 type="number"
                 step="any"
                 placeholder="e.g., 8500"
-                class="w-full border-[3px] border-black p-3 font-mono focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
+                class="w-full border-[3px] border-black p-3 font-mono text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
                 :class="{ 'border-[#ef4444]': errors.targetEntry }"
               />
               <p v-if="errors.targetEntry" class="text-xs text-[#ef4444] font-mono mt-1">
@@ -315,7 +315,7 @@ const handleClose = () => {
                 type="number"
                 step="any"
                 placeholder="e.g., 9000"
-                class="w-full border-[3px] border-black p-3 font-mono focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
+                class="w-full border-[3px] border-black p-3 font-mono text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
                 :class="{ 'border-[#ef4444]': errors.targetExit }"
               />
               <p v-if="errors.targetExit" class="text-xs text-[#ef4444] font-mono mt-1">

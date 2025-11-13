@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { WatchlistItem } from '@/types'
 import WatchlistItemRow from './WatchlistItemRow.vue'
+import draggable from 'vuedraggable'
 
 interface Props {
   watchlist: WatchlistItem[]
@@ -18,6 +19,15 @@ const emit = defineEmits<{
 
 // Expanded rows tracking
 const expandedRows = ref<Set<string>>(new Set())
+
+// Local draggable list (v-model for draggable)
+const localWatchlist = computed({
+  get: () => props.watchlist,
+  set: (value) => {
+    // Emit reorder event when drag completes
+    emit('reorder', value)
+  },
+})
 
 /**
  * Toggle row expansion
@@ -101,23 +111,36 @@ const handleDelete = (itemId: string) => {
         <div class="col-span-1 text-center">Actions</div>
       </div>
 
-      <!-- Table Body -->
-      <div class="divide-y-[3px] divide-black">
-        <WatchlistItemRow
-          v-for="item in watchlist"
-          :key="item.id"
-          :item="item"
-          :is-expanded="expandedRows.has(item.id)"
-          @toggle-expand="toggleExpand(item.id)"
-          @update="handleUpdate"
-          @delete="handleDelete"
-        />
-      </div>
+      <!-- Table Body with Drag-and-Drop -->
+      <draggable
+        v-model="localWatchlist"
+        item-key="id"
+        class="divide-y-[3px] divide-black"
+        handle=".drag-handle"
+        :animation="200"
+        ghost-class="ghost"
+      >
+        <template #item="{ element: item }">
+          <WatchlistItemRow
+            :item="item"
+            :is-expanded="expandedRows.has(item.id)"
+            @toggle-expand="toggleExpand(item.id)"
+            @update="handleUpdate"
+            @delete="handleDelete"
+          />
+        </template>
+      </draggable>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* Drag-and-drop ghost effect */
+:deep(.ghost) {
+  opacity: 0.5;
+  background: #fbbf24;
+}
+
 /* Responsive adjustments for mobile */
 @media (max-width: 640px) {
   /* Hide table header on mobile, use card layout in WatchlistItemRow instead */

@@ -152,7 +152,7 @@ const handleAddChecklistItem = async (text: string) => {
   if (!currentPlan.value) return
 
   try {
-    await dailyPlansStore.addChecklistItem(currentPlan.value.id, text)
+    await dailyPlansStore.addChecklistItem(currentPlan.value.id, { text })
   } catch (error) {
     console.error('Failed to add checklist item:', error)
   }
@@ -200,11 +200,10 @@ const handleApplyChecklistTemplate = async (
   try {
     // Add all template items
     for (const item of items) {
-      await dailyPlansStore.addChecklistItem(
-        currentPlan.value.id,
-        item.text,
-        item.isTemplate
-      )
+      await dailyPlansStore.addChecklistItem(currentPlan.value.id, {
+        text: item.text,
+        isTemplate: item.isTemplate,
+      })
     }
   } catch (error) {
     console.error('Failed to apply checklist template:', error)
@@ -221,6 +220,29 @@ const handleClearAllChecklist = async () => {
     }
   } catch (error) {
     console.error('Failed to clear checklist:', error)
+  }
+}
+
+const handleReorderChecklist = async (items: ChecklistItem[]) => {
+  if (!currentPlan.value) return
+
+  try {
+    // Update position field for each item
+    const updatedItems = items.map((item, index) => ({
+      ...item,
+      position: index,
+    }))
+    // Update position for each item individually
+    for (const item of updatedItems) {
+      await dailyPlansStore.updateChecklistItem(
+        currentPlan.value.id,
+        item.id,
+        item.completed,
+        item.text
+      )
+    }
+  } catch (error) {
+    console.error('Failed to reorder checklist:', error)
   }
 }
 
@@ -364,6 +386,7 @@ const handleCompletePlan = async () => {
           @update="handleUpdateChecklistItem"
           @update-text="handleUpdateChecklistItemText"
           @delete="handleDeleteChecklistItem"
+          @reorder="handleReorderChecklist"
           @apply-template="handleApplyChecklistTemplate"
           @clear-all="handleClearAllChecklist"
         />
