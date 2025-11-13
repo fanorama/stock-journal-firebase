@@ -49,11 +49,11 @@ const navigateTo = (path: string) => {
 
     <div class="space-y-6">
       <!-- Welcome Header -->
-      <div class="bg-white border-[5px] border-black p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <h1 class="text-3xl font-bold uppercase tracking-wide text-[#0a0a0a] mb-2">
+      <div class="bg-white border-[5px] border-black p-4 sm:p-6 lg:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-wide text-[#0a0a0a] mb-2">
           📊 Trading Dashboard
         </h1>
-        <p class="text-[#525252] font-mono text-lg">
+        <p class="text-[#525252] font-mono text-sm sm:text-base lg:text-lg">
           Track your trading performance and improve your strategy
         </p>
       </div>
@@ -64,7 +64,7 @@ const navigateTo = (path: string) => {
       <!-- No Active Portfolio Warning -->
       <div
         v-if="!portfoliosStore.activePortfolioId"
-        class="bg-[#fef3c7] border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+        class="bg-[#fef3c7] border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
       >
         <div class="flex items-center gap-3 mb-4">
           <svg
@@ -73,7 +73,7 @@ const navigateTo = (path: string) => {
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-6 h-6 text-[#f59e0b]"
+            class="w-6 h-6 text-[#f59e0b] flex-shrink-0"
           >
             <path
               stroke-linecap="round"
@@ -82,14 +82,14 @@ const navigateTo = (path: string) => {
             />
           </svg>
           <div>
-            <h3 class="font-bold uppercase text-[#0a0a0a] tracking-wide">Get Started</h3>
+            <h3 class="text-base sm:text-lg font-bold uppercase text-[#0a0a0a] tracking-wide">Get Started</h3>
             <p class="text-[#525252] font-mono text-sm">
               Create your first portfolio to start tracking your trades
             </p>
           </div>
         </div>
         <button
-          class="bg-[#f59e0b] border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-100"
+          class="bg-[#f59e0b] border-[3px] border-black px-6 py-3 min-h-[44px] font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all duration-100 touch-manipulation w-full sm:w-auto"
           @click="navigateTo('/portfolios')"
         >
           Create Portfolio
@@ -97,14 +97,14 @@ const navigateTo = (path: string) => {
       </div>
 
       <!-- Quick Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <!-- Portfolios -->
         <div
-          class="bg-[#f59e0b] border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 cursor-pointer"
+          class="bg-[#f59e0b] border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 cursor-pointer touch-manipulation min-h-[120px] flex flex-col justify-between"
           @click="navigateTo('/portfolios')"
         >
           <div class="flex items-center justify-between mb-2">
-            <h3 class="font-bold uppercase text-[#0a0a0a] text-sm tracking-wide">Portfolios</h3>
+            <h3 class="font-bold uppercase text-[#0a0a0a] text-xs sm:text-sm tracking-wide">Portfolios</h3>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -120,17 +120,19 @@ const navigateTo = (path: string) => {
               />
             </svg>
           </div>
-          <p class="text-4xl font-bold font-mono text-[#0a0a0a]">{{ stats.portfolios }}</p>
-          <p class="text-xs font-mono text-[#0a0a0a] mt-1 opacity-80">Active portfolios</p>
+          <div>
+            <p class="text-3xl sm:text-4xl font-bold font-mono text-[#0a0a0a]">{{ stats.portfolios }}</p>
+            <p class="text-xs font-mono text-[#0a0a0a] mt-1 opacity-80">Active portfolios</p>
+          </div>
         </div>
 
         <!-- Total Trades -->
         <div
-          class="bg-[#10b981] border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 cursor-pointer"
+          class="bg-[#10b981] border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 cursor-pointer touch-manipulation min-h-[120px] flex flex-col justify-between"
           @click="navigateTo('/trades')"
         >
           <div class="flex items-center justify-between mb-2">
-            <h3 class="font-bold uppercase text-white text-sm tracking-wide">Total Trades</h3>
+            <h3 class="font-bold uppercase text-white text-xs sm:text-sm tracking-wide">Total Trades</h3>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -146,19 +148,21 @@ const navigateTo = (path: string) => {
               />
             </svg>
           </div>
-          <p class="text-4xl font-bold font-mono text-white">{{ stats.trades }}</p>
-          <p class="text-xs font-mono text-white mt-1 opacity-80">
-            {{ stats.buyTrades }} buys / {{ stats.sellTrades }} sells
-          </p>
+          <div>
+            <p class="text-3xl sm:text-4xl font-bold font-mono text-white">{{ stats.trades }}</p>
+            <p class="text-xs font-mono text-white mt-1 opacity-80">
+              {{ stats.buyTrades }} buys / {{ stats.sellTrades }} sells
+            </p>
+          </div>
         </div>
 
         <!-- Journal Entries -->
         <div
-          class="bg-[#a855f7] border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 cursor-pointer"
+          class="bg-[#a855f7] border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 cursor-pointer touch-manipulation min-h-[120px] flex flex-col justify-between"
           @click="navigateTo('/journals')"
         >
           <div class="flex items-center justify-between mb-2">
-            <h3 class="font-bold uppercase text-white text-sm tracking-wide">Journal Entries</h3>
+            <h3 class="font-bold uppercase text-white text-xs sm:text-sm tracking-wide">Journal Entries</h3>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -174,14 +178,16 @@ const navigateTo = (path: string) => {
               />
             </svg>
           </div>
-          <p class="text-4xl font-bold font-mono text-white">{{ stats.journals }}</p>
-          <p class="text-xs font-mono text-white mt-1 opacity-80">Documented insights</p>
+          <div>
+            <p class="text-3xl sm:text-4xl font-bold font-mono text-white">{{ stats.journals }}</p>
+            <p class="text-xs font-mono text-white mt-1 opacity-80">Documented insights</p>
+          </div>
         </div>
 
         <!-- Active Portfolio Card -->
-        <div class="bg-[#3b82f6] border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <div class="bg-[#3b82f6] border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] min-h-[120px] flex flex-col justify-between">
           <div class="flex items-center justify-between mb-2">
-            <h3 class="font-bold uppercase text-white text-sm tracking-wide">Active Portfolio</h3>
+            <h3 class="font-bold uppercase text-white text-xs sm:text-sm tracking-wide">Active Portfolio</h3>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -197,33 +203,35 @@ const navigateTo = (path: string) => {
               />
             </svg>
           </div>
-          <p class="text-lg font-bold font-mono text-white truncate">
-            {{ portfoliosStore.activePortfolio?.name || 'None' }}
-          </p>
-          <p class="text-xs font-mono text-white mt-1 opacity-80">Selected portfolio</p>
+          <div>
+            <p class="text-base sm:text-lg font-bold font-mono text-white truncate">
+              {{ portfoliosStore.activePortfolio?.name || 'None' }}
+            </p>
+            <p class="text-xs font-mono text-white mt-1 opacity-80">Selected portfolio</p>
+          </div>
         </div>
       </div>
 
       <!-- Quick Actions -->
-      <div class="bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-        <h2 class="text-xl font-bold uppercase text-[#0a0a0a] mb-4 tracking-wide">
+      <div class="bg-white border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        <h2 class="text-lg sm:text-xl lg:text-2xl font-bold uppercase text-[#0a0a0a] mb-4 tracking-wide">
           ⚡ Quick Actions
         </h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <button
-            class="bg-[#10b981] border-[3px] border-black px-6 py-4 font-bold uppercase tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-100"
+            class="bg-[#10b981] border-[3px] border-black px-6 py-4 min-h-[44px] font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all duration-100 touch-manipulation"
             @click="navigateTo('/trades')"
           >
             📈 Record New Trade
           </button>
           <button
-            class="bg-[#a855f7] border-[3px] border-black px-6 py-4 font-bold uppercase tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-100"
+            class="bg-[#a855f7] border-[3px] border-black px-6 py-4 min-h-[44px] font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all duration-100 touch-manipulation"
             @click="navigateTo('/journals')"
           >
             📝 Write Journal Entry
           </button>
           <button
-            class="bg-[#f59e0b] border-[3px] border-black px-6 py-4 font-bold uppercase tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-100"
+            class="bg-[#f59e0b] border-[3px] border-black px-6 py-4 min-h-[44px] font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all duration-100 touch-manipulation"
             @click="navigateTo('/portfolios')"
           >
             💼 Manage Portfolios
@@ -232,7 +240,7 @@ const navigateTo = (path: string) => {
       </div>
 
       <!-- Info Banner -->
-      <div class="bg-[#fef3c7] border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+      <div class="bg-[#fef3c7] border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <div class="flex items-start gap-3">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -249,7 +257,7 @@ const navigateTo = (path: string) => {
             />
           </svg>
           <div>
-            <h3 class="font-bold uppercase text-[#0a0a0a] tracking-wide mb-1">💡 Pro Tip</h3>
+            <h3 class="text-base sm:text-lg font-bold uppercase text-[#0a0a0a] tracking-wide mb-1">💡 Pro Tip</h3>
             <p class="text-sm font-mono text-[#525252]">
               Consistently documenting your trades and maintaining a journal will help you identify patterns
               and improve your trading strategy over time. Track every trade, reflect on your decisions,

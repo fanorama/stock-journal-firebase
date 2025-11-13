@@ -89,8 +89,8 @@ const isActiveRoute = (path: string) => {
       isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
     ]">
       <!-- Logo/Brand -->
-      <div class="p-6 border-b-[3px] border-black">
-        <h1 class="text-2xl font-bold uppercase tracking-wide text-[#0a0a0a]">
+      <div class="p-4 sm:p-6 border-b-[3px] border-black">
+        <h1 class="text-xl sm:text-2xl font-bold uppercase tracking-wide text-[#0a0a0a]">
           Stock Journal
         </h1>
         <p class="text-xs font-mono text-[#525252] mt-1">Trading Analytics</p>
@@ -101,11 +101,11 @@ const isActiveRoute = (path: string) => {
         <ul class="space-y-2">
           <li v-for="item in navigationItems" :key="item.path">
             <router-link :to="item.path" @click="closeSidebar" :class="[
-              'flex items-center gap-3 px-4 py-3 font-bold uppercase text-sm tracking-wide transition-all duration-100',
+              'flex items-center gap-3 px-4 py-3 min-h-[44px] font-bold uppercase text-sm tracking-wide transition-all duration-100 touch-manipulation',
               'border-[3px] border-black',
               isActiveRoute(item.path)
                 ? 'bg-[#f59e0b] text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
-                : 'bg-white text-[#0a0a0a] hover:bg-[#fafafa] hover:translate-x-1 hover:translate-y-1',
+                : 'bg-white text-[#0a0a0a] hover:bg-[#fafafa] hover:translate-x-1 hover:translate-y-1 active:shadow-none',
             ]">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor" stroke-width="2.5">
@@ -138,9 +138,9 @@ const isActiveRoute = (path: string) => {
     <div class="lg:ml-64">
       <!-- Header -->
       <header class="bg-white border-b-[5px] border-black sticky top-0 z-10">
-        <div class="flex items-center justify-between px-4 py-4 lg:px-6">
+        <div class="flex items-center justify-between px-4 py-3 sm:py-4 lg:px-6">
           <!-- Mobile Menu Button -->
-          <button @click="toggleSidebar" class="lg:hidden p-2 border-[3px] border-black bg-[#f59e0b] hover:bg-[#d97706] transition-colors">
+          <button @click="toggleSidebar" class="lg:hidden p-2 min-h-[44px] min-w-[44px] border-[3px] border-black bg-[#f59e0b] hover:bg-[#d97706] active:bg-[#b45309] transition-colors touch-manipulation flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#0a0a0a]" fill="none" viewBox="0 0 24 24"
               stroke="currentColor" stroke-width="3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
