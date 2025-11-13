@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue'
 import MainLayout from '@/layouts/MainLayout.vue'
 import WatchlistSection from '@/components/planner/WatchlistSection.vue'
 import ChecklistSection from '@/components/planner/ChecklistSection.vue'
+import ReviewSection from '@/components/planner/ReviewSection.vue'
 import type { WatchlistItem, ChecklistItem } from '@/types'
 import { useDailyPlansStore } from '@/stores'
 import { formatDateToId } from '@/firebase/firestore'
@@ -222,6 +223,27 @@ const handleClearAllChecklist = async () => {
     console.error('Failed to clear checklist:', error)
   }
 }
+
+// Review actions
+const handleUpdateReviewNotes = async (notes: string) => {
+  if (!currentPlan.value) return
+
+  try {
+    await dailyPlansStore.updateReviewNotes(currentPlan.value.id, notes)
+  } catch (error) {
+    console.error('Failed to update review notes:', error)
+  }
+}
+
+const handleCompletePlan = async () => {
+  if (!currentPlan.value) return
+
+  try {
+    await dailyPlansStore.completePlan(currentPlan.value.id)
+  } catch (error) {
+    console.error('Failed to complete plan:', error)
+  }
+}
 </script>
 
 <template>
@@ -346,22 +368,16 @@ const handleClearAllChecklist = async () => {
           @clear-all="handleClearAllChecklist"
         />
 
-        <!-- Review Section Placeholder -->
-        <div
-          class="bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
-        >
-          <h3 class="text-xl font-bold uppercase text-[#0a0a0a] mb-4 tracking-wide">
-            📝 Post-Market Review
-          </h3>
-          <p class="text-[#525252] font-mono text-sm">
-            Review component will be added in Phase 2.5
-          </p>
-          <div class="mt-4 p-4 bg-[#fafafa] border-[3px] border-black">
-            <p class="font-mono text-xs text-[#525252]">
-              Adherence Rate: {{ currentPlan.review.adherenceRate.toFixed(1) }}%
-            </p>
-          </div>
-        </div>
+        <!-- Review Section -->
+        <ReviewSection
+          :plan-id="currentPlan.id"
+          :watchlist="currentPlan.watchlist"
+          :review="currentPlan.review"
+          :status="currentPlan.status"
+          :is-loading="false"
+          @update-notes="handleUpdateReviewNotes"
+          @complete-plan="handleCompletePlan"
+        />
       </template>
     </div>
   </MainLayout>
