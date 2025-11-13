@@ -93,12 +93,20 @@ const planStatusBadge = computed(() => {
 const handleAddWatchlistItem = async (
   item: Omit<WatchlistItem, 'id' | 'addedAt' | 'position'>
 ) => {
-  if (!currentPlan.value) return
+  if (!currentPlan.value) {
+    alert('⚠️ Plan belum tersedia. Silakan refresh halaman.')
+    return
+  }
 
   try {
     await dailyPlansStore.addWatchlistItem(currentPlan.value.id, item)
   } catch (error) {
     console.error('Failed to add watchlist item:', error)
+    alert(
+      '❌ Gagal menambahkan stock ke watchlist.\n\nPesan error: ' +
+        (error instanceof Error ? error.message : 'Unknown error') +
+        '\n\nSilakan coba lagi atau refresh halaman.'
+    )
   }
 }
 
@@ -116,12 +124,20 @@ const handleUpdateWatchlistItem = async (
 }
 
 const handleDeleteWatchlistItem = async (itemId: string) => {
-  if (!currentPlan.value) return
+  if (!currentPlan.value) {
+    alert('⚠️ Plan belum tersedia. Silakan refresh halaman.')
+    return
+  }
 
   try {
     await dailyPlansStore.deleteWatchlistItem(currentPlan.value.id, itemId)
   } catch (error) {
     console.error('Failed to delete watchlist item:', error)
+    alert(
+      '❌ Gagal menghapus item dari watchlist.\n\nPesan error: ' +
+        (error instanceof Error ? error.message : 'Unknown error') +
+        '\n\nSilakan coba lagi atau refresh halaman.'
+    )
   }
 }
 
@@ -210,6 +226,45 @@ const handleApplyChecklistTemplate = async (
   }
 }
 
+const handleCopyFromYesterday = async () => {
+  if (!currentPlan.value) return
+
+  try {
+    // Calculate yesterday's date
+    const yesterday = new Date(selectedDate.value)
+    yesterday.setDate(yesterday.getDate() - 1)
+    const yesterdayId = formatDateToId(yesterday)
+
+    // Get yesterday's plan
+    const yesterdayPlan = dailyPlansStore.getPlanByDate(yesterdayId)
+
+    if (!yesterdayPlan || !yesterdayPlan.checklist || yesterdayPlan.checklist.length === 0) {
+      alert('Tidak ada checklist dari kemarin untuk di-copy.')
+      return
+    }
+
+    // Confirm copy action
+    const confirmed = confirm(
+      `Copy ${yesterdayPlan.checklist.length} checklist items dari kemarin? Items akan ditambahkan dengan status unchecked.`
+    )
+
+    if (!confirmed) return
+
+    // Copy items with completion reset
+    for (const item of yesterdayPlan.checklist) {
+      await dailyPlansStore.addChecklistItem(currentPlan.value.id, {
+        text: item.text,
+        isTemplate: item.isTemplate,
+      })
+    }
+
+    alert(`Berhasil copy ${yesterdayPlan.checklist.length} items dari kemarin!`)
+  } catch (error) {
+    console.error('Failed to copy checklist from yesterday:', error)
+    alert('Gagal copy checklist dari kemarin. Silakan coba lagi.')
+  }
+}
+
 const handleClearAllChecklist = async () => {
   if (!currentPlan.value) return
 
@@ -258,12 +313,21 @@ const handleUpdateReviewNotes = async (notes: string) => {
 }
 
 const handleCompletePlan = async () => {
-  if (!currentPlan.value) return
+  if (!currentPlan.value) {
+    alert('⚠️ Plan belum tersedia. Silakan refresh halaman.')
+    return
+  }
 
   try {
     await dailyPlansStore.completePlan(currentPlan.value.id)
+    alert('✅ Plan berhasil di-complete! Semua data sudah tersimpan.')
   } catch (error) {
     console.error('Failed to complete plan:', error)
+    alert(
+      '❌ Gagal melakukan complete plan.\n\nPesan error: ' +
+        (error instanceof Error ? error.message : 'Unknown error') +
+        '\n\nSilakan coba lagi atau refresh halaman.'
+    )
   }
 }
 </script>
@@ -285,20 +349,28 @@ const handleCompletePlan = async () => {
     <div class="space-y-6">
       <!-- Date Selector -->
       <div
-        class="bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+        class="bg-white border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
       >
-        <div class="flex items-center justify-between">
-          <!-- Previous Day Button -->
-          <button
-            class="bg-[#fafafa] border-[3px] border-black px-4 py-2 font-bold text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
-            @click="goToPreviousDay"
-          >
-            ← Previous
-          </button>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <!-- Navigation Buttons - Side by Side on Mobile -->
+          <div class="flex gap-2 sm:gap-0 w-full sm:w-auto justify-between sm:justify-start order-2 sm:order-1">
+            <button
+              class="bg-[#fafafa] border-[3px] border-black px-4 py-2 min-h-[44px] font-bold text-sm sm:text-base text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation"
+              @click="goToPreviousDay"
+            >
+              ← Previous
+            </button>
+            <button
+              class="bg-[#fafafa] border-[3px] border-black px-4 py-2 min-h-[44px] font-bold text-sm sm:text-base text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation sm:hidden"
+              @click="goToNextDay"
+            >
+              Next →
+            </button>
+          </div>
 
           <!-- Current Date Display -->
-          <div class="text-center">
-            <h2 class="text-2xl font-bold uppercase text-[#0a0a0a] tracking-wide">
+          <div class="text-center flex-1 order-1 sm:order-2">
+            <h2 class="text-lg sm:text-2xl font-bold uppercase text-[#0a0a0a] tracking-wide">
               {{ formattedDate }}
             </h2>
             <div class="mt-2">
@@ -313,9 +385,9 @@ const handleCompletePlan = async () => {
             </div>
           </div>
 
-          <!-- Next Day Button -->
+          <!-- Next Day Button - Desktop Only -->
           <button
-            class="bg-[#fafafa] border-[3px] border-black px-4 py-2 font-bold text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+            class="hidden sm:block bg-[#fafafa] border-[3px] border-black px-4 py-2 font-bold text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 order-3"
             @click="goToNextDay"
           >
             Next →
@@ -379,6 +451,7 @@ const handleCompletePlan = async () => {
         <!-- Checklist Section -->
         <ChecklistSection
           :plan-id="currentPlan.id"
+          :plan-date="currentPlan.planDate"
           :checklist="currentPlan.checklist"
           :checklist-progress="currentPlan.checklistProgress"
           :is-loading="false"
@@ -389,6 +462,7 @@ const handleCompletePlan = async () => {
           @reorder="handleReorderChecklist"
           @apply-template="handleApplyChecklistTemplate"
           @clear-all="handleClearAllChecklist"
+          @copy-from-yesterday="handleCopyFromYesterday"
         />
 
         <!-- Review Section -->

@@ -7,6 +7,7 @@ import draggable from 'vuedraggable'
 
 interface Props {
   planId: string
+  planDate: string // yyyy-MM-dd format
   checklist: ChecklistItem[]
   checklistProgress: {
     completed: number
@@ -25,6 +26,7 @@ const emit = defineEmits<{
   reorder: [items: ChecklistItem[]]
   applyTemplate: [items: Omit<ChecklistItem, 'id' | 'position'>[]]
   clearAll: []
+  copyFromYesterday: []
 }>()
 
 // New item input
@@ -114,6 +116,13 @@ const handleClearAll = () => {
     emit('clearAll')
   }
 }
+
+/**
+ * Handle copy from yesterday
+ */
+const handleCopyFromYesterday = () => {
+  emit('copyFromYesterday')
+}
 </script>
 
 <template>
@@ -130,7 +139,15 @@ const handleClearAll = () => {
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex gap-2">
+      <div class="flex gap-2 flex-wrap">
+        <button
+          v-if="checklist.length === 0"
+          class="bg-[#f59e0b] border-[3px] border-black px-3 py-2 font-bold uppercase text-xs tracking-wide text-white shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+          @click="handleCopyFromYesterday"
+          title="Copy checklist dari kemarin"
+        >
+          📋 Copy Yesterday
+        </button>
         <button
           v-if="checklist.length > 0"
           class="bg-[#fafafa] border-[3px] border-black px-3 py-2 font-bold uppercase text-xs tracking-wide text-[#0a0a0a] shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"

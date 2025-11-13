@@ -143,12 +143,12 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
 
 <template>
   <div class="watchlist-item-row bg-white hover:bg-[#fafafa] transition-colors">
-    <!-- Main Row Content -->
-    <div class="grid grid-cols-12 gap-3 px-4 py-4 items-center">
-      <!-- Drag Handle -->
-      <div class="col-span-2 flex items-center gap-2">
+    <!-- Main Row Content - Desktop Grid / Mobile Card -->
+    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 px-4 py-4 items-start sm:items-center">
+      <!-- Drag Handle + Symbol -->
+      <div class="sm:col-span-2 flex items-center gap-2">
         <button
-          class="drag-handle cursor-move p-1 hover:bg-[#fafafa] border-[2px] border-transparent hover:border-black transition-colors"
+          class="drag-handle cursor-move p-1 hover:bg-[#fafafa] border-[2px] border-transparent hover:border-black transition-colors touch-manipulation"
           title="Drag to reorder"
         >
           <svg
@@ -157,7 +157,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-4 h-4 text-[#737373]"
+            class="w-5 h-5 sm:w-4 sm:h-4 text-[#737373]"
           >
             <path
               stroke-linecap="round"
@@ -166,13 +166,14 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
             />
           </svg>
         </button>
-        <p class="font-bold text-lg text-[#0a0a0a] uppercase">
+        <p class="font-bold text-xl sm:text-lg text-[#0a0a0a] uppercase">
           {{ item.symbol }}
         </p>
       </div>
 
       <!-- Strategy -->
-      <div class="col-span-3">
+      <div class="sm:col-span-3">
+        <div class="sm:hidden text-xs font-bold text-[#737373] uppercase mb-1">Strategy:</div>
         <StrategyBadgePopover
           :strategy-id="item.strategyId"
           :strategy-name="item.strategyName"
@@ -180,14 +181,16 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
       </div>
 
       <!-- Notes (truncated) -->
-      <div class="col-span-3">
+      <div class="sm:col-span-3">
+        <div class="sm:hidden text-xs font-bold text-[#737373] uppercase mb-1">Notes:</div>
         <p class="text-sm font-mono text-[#525252]">
-          {{ truncateText(item.notes, 60) }}
+          {{ truncateText(item.notes, isExpanded ? 200 : 60) }}
         </p>
       </div>
 
       <!-- Targets -->
-      <div class="col-span-2">
+      <div class="sm:col-span-2">
+        <div class="sm:hidden text-xs font-bold text-[#737373] uppercase mb-1">Targets:</div>
         <div class="text-xs font-mono space-y-1">
           <p v-if="item.targetEntry" class="text-[#10b981]">
             Entry: {{ item.targetEntry }}
@@ -202,7 +205,8 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
       </div>
 
       <!-- Status Badge -->
-      <div class="col-span-1">
+      <div class="sm:col-span-1">
+        <div class="sm:hidden text-xs font-bold text-[#737373] uppercase mb-1">Status:</div>
         <span
           :class="[
             'inline-block px-2 py-1 border-[2px] font-bold text-xs uppercase tracking-wide text-[#0a0a0a]',
@@ -215,10 +219,10 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
       </div>
 
       <!-- Actions -->
-      <div class="col-span-1 flex gap-2 justify-center">
+      <div class="sm:col-span-1 flex gap-2 justify-start sm:justify-center flex-wrap">
         <!-- Expand/Collapse Button -->
         <button
-          class="p-1 border-[2px] border-black hover:bg-[#fafafa] transition-colors"
+          class="p-2 sm:p-1 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 border-[2px] border-black hover:bg-[#fafafa] transition-colors touch-manipulation"
           :title="isExpanded ? 'Collapse' : 'Expand'"
           @click="$emit('toggleExpand')"
         >
@@ -228,7 +232,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-4 h-4 transition-transform"
+            class="w-5 h-5 sm:w-4 sm:h-4 transition-transform mx-auto"
             :class="{ 'rotate-180': isExpanded }"
           >
             <path
@@ -242,7 +246,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
         <!-- Create Trade Button (only show if status is 'planned') -->
         <button
           v-if="item.status === 'planned'"
-          class="p-1 border-[2px] border-black hover:bg-[#10b981] hover:text-white transition-colors"
+          class="p-2 sm:p-1 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 border-[2px] border-black hover:bg-[#10b981] hover:text-white transition-colors touch-manipulation"
           title="Create Trade"
           @click="handleCreateTrade"
         >
@@ -252,7 +256,7 @@ const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
             viewBox="0 0 24 24"
             stroke-width="2"
             stroke="currentColor"
-            class="w-4 h-4"
+            class="w-5 h-5 sm:w-4 sm:h-4 mx-auto"
           >
             <path
               stroke-linecap="round"

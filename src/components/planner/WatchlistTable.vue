@@ -100,9 +100,9 @@ const handleDelete = (itemId: string) => {
 
     <!-- Watchlist Table Content -->
     <div v-else class="border-[3px] border-black overflow-hidden">
-      <!-- Table Header -->
+      <!-- Table Header - Hidden on Mobile -->
       <div
-        class="grid grid-cols-12 gap-3 bg-[#f59e0b] border-b-[3px] border-black px-4 py-3 font-bold text-sm uppercase tracking-wide text-[#0a0a0a]"
+        class="hidden sm:grid grid-cols-12 gap-3 bg-[#f59e0b] border-b-[3px] border-black px-4 py-3 font-bold text-sm uppercase tracking-wide text-[#0a0a0a]"
       >
         <div class="col-span-2">Symbol</div>
         <div class="col-span-3">Strategy</div>
