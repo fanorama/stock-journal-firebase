@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import type { WatchlistItem } from '@/types'
+import type { WatchlistItemInput } from '@/types'
 import { useStrategiesStore } from '@/stores'
 import StrategyPreviewPanel from '../strategy/StrategyPreviewPanel.vue'
 
@@ -12,7 +12,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   close: []
-  success: [item: Omit<WatchlistItem, 'id' | 'addedAt' | 'position'>]
+  success: [item: WatchlistItemInput]
 }>()
 
 const strategiesStore = useStrategiesStore()
@@ -123,9 +123,6 @@ const handleSubmit = async () => {
       notes: formData.value.notes.trim(),
       targetEntry: formData.value.targetEntry,
       targetExit: formData.value.targetExit,
-      status: 'planned',
-      tradeId: undefined,
-      outcome: undefined,
     })
 
     resetForm()

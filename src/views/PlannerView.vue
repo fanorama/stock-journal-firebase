@@ -3,7 +3,7 @@ import { ref, computed, watch } from 'vue'
 import WatchlistSection from '@/components/planner/WatchlistSection.vue'
 import ChecklistSection from '@/components/planner/ChecklistSection.vue'
 import ReviewSection from '@/components/planner/ReviewSection.vue'
-import type { WatchlistItem, ChecklistItem } from '@/types'
+import type { WatchlistItem, WatchlistItemInput, ChecklistItem } from '@/types'
 import { useDailyPlansStore } from '@/stores'
 import { formatDateToId } from '@/firebase/firestore'
 
@@ -89,9 +89,7 @@ const planStatusBadge = computed(() => {
 })
 
 // Watchlist actions
-const handleAddWatchlistItem = async (
-  item: Omit<WatchlistItem, 'id' | 'addedAt' | 'position'>
-) => {
+const handleAddWatchlistItem = async (item: WatchlistItemInput) => {
   if (!currentPlan.value) {
     alert('⚠️ Plan belum tersedia. Silakan refresh halaman.')
     return

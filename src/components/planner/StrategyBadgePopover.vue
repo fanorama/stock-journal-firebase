@@ -77,20 +77,23 @@ const closePopover = () => {
 
     <!-- Popover Content (Teleported to body for better positioning) -->
     <Teleport to="body">
+      <!--
+        Modal Backdrop Pattern:
+        - bg-black/50: Standard opacity (50%) matching all other modals in the app
+        - z-50: Standard z-index for modal overlays
+        - items-start + pt-20: Top-aligned positioning for strategy preview panel
+          (instead of center-aligned like dialog modals)
+      -->
       <div
         v-if="showPopover"
-        class="fixed inset-0 z-40"
+        class="fixed inset-0 bg-black/50 z-50 flex items-start justify-center pt-20 px-4"
         @click="closePopover"
       >
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-
         <!-- Popover Panel -->
-        <div class="relative z-50 flex items-start justify-center pt-20 px-4">
-          <div
-            class="max-w-2xl w-full"
-            @click.stop
-          >
+        <div
+          class="relative z-50 max-w-2xl w-full"
+          @click.stop
+        >
             <!-- Loading State -->
             <div
               v-if="!strategy()"
@@ -131,7 +134,6 @@ const closePopover = () => {
                 :show-link="true"
               />
             </div>
-          </div>
         </div>
       </div>
     </Teleport>

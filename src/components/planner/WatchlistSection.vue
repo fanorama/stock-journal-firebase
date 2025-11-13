@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { WatchlistItem } from '@/types'
+import type { WatchlistItem, WatchlistItemInput } from '@/types'
 import WatchlistTable from './WatchlistTable.vue'
 import AddWatchlistItemModal from './AddWatchlistItemModal.vue'
 
@@ -13,7 +13,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  add: [item: Omit<WatchlistItem, 'id' | 'addedAt' | 'position'>]
+  add: [item: WatchlistItemInput]
   update: [itemId: string, updates: Partial<WatchlistItem>]
   delete: [itemId: string]
   reorder: [items: WatchlistItem[]]
@@ -25,7 +25,7 @@ const showAddModal = ref(false)
 /**
  * Handle add new watchlist item
  */
-const handleAdd = (item: Omit<WatchlistItem, 'id' | 'addedAt' | 'position'>) => {
+const handleAdd = (item: WatchlistItemInput) => {
   emit('add', item)
   showAddModal.value = false
 }
