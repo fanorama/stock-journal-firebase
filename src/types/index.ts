@@ -19,5 +19,22 @@ export type {
   LogicalOperator,
   MarketType,
   Currency,
+  DailyPlan,
+  DailyPlanInput,
+  DailyPlanStatus,
+  WatchlistItem,
+  WatchlistItemInput,
+  WatchlistStatus,
+  ChecklistItem,
+  ChecklistItemInput,
+  ReviewData,
 } from './models'
-export { MARKET_TYPES, CURRENCIES, RULE_TYPES, COMPARISON_OPERATORS, LOGICAL_OPERATORS } from './models'
+export {
+  MARKET_TYPES,
+  CURRENCIES,
+  RULE_TYPES,
+  COMPARISON_OPERATORS,
+  LOGICAL_OPERATORS,
+  WATCHLIST_STATUS,
+  DAILY_PLAN_STATUS,
+} from './models'
