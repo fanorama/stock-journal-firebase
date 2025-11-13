@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import type { WatchlistItem } from '@/types'
+import type { WatchlistItem, WatchlistStatus } from '@/types'
 import EditWatchlistItemModal from './EditWatchlistItemModal.vue'
+import MarkWatchlistItemModal from './MarkWatchlistItemModal.vue'
 import StrategyBadgePopover from './StrategyBadgePopover.vue'
+import { Timestamp } from 'firebase/firestore'
 
 interface Props {
   item: WatchlistItem
@@ -23,6 +25,8 @@ const emit = defineEmits<{
 // Modal states
 const showEditModal = ref(false)
 const showDeleteConfirm = ref(false)
+const showMarkModal = ref(false)
+const markAction = ref<'skipped' | 'missed'>('skipped')
 
 /**
  * Status badge styling
@@ -102,6 +106,36 @@ const handleCreateTrade = () => {
       targetExit: props.item.targetExit?.toString(),
       planId: props.planId,
       watchlistItemId: props.item.id,
+    },
+  })
+}
+
+/**
+ * Handle mark as skipped
+ */
+const handleMarkAsSkipped = () => {
+  markAction.value = 'skipped'
+  showMarkModal.value = true
+}
+
+/**
+ * Handle mark as missed
+ */
+const handleMarkAsMissed = () => {
+  markAction.value = 'missed'
+  showMarkModal.value = true
+}
+
+/**
+ * Handle mark confirmation from modal
+ */
+const handleMarkConfirm = (status: WatchlistStatus, outcomeNotes: string) => {
+  // Update item with new status and outcome
+  emit('update', props.item.id, {
+    status,
+    outcome: {
+      executedAt: Timestamp.now(),
+      notes: outcomeNotes,
     },
   })
 }
@@ -311,6 +345,45 @@ const handleCreateTrade = () => {
           </div>
         </div>
       </div>
+
+      <!-- Action Buttons (only for 'planned' status) -->
+      <div v-if="item.status === 'planned'" class="mt-4 pt-4 border-t-[3px] border-black">
+        <h5 class="text-xs font-bold uppercase text-[#0a0a0a] mb-3 tracking-wide">
+          Quick Actions
+        </h5>
+        <div class="flex gap-3 flex-wrap">
+          <!-- Mark as Skipped -->
+          <button
+            class="bg-[#a3a3a3] border-[3px] border-black px-4 py-2 font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+            @click="handleMarkAsSkipped"
+          >
+            Mark as Skipped
+          </button>
+
+          <!-- Mark as Missed -->
+          <button
+            class="bg-[#f87171] border-[3px] border-black px-4 py-2 font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+            @click="handleMarkAsMissed"
+          >
+            Mark as Missed
+          </button>
+        </div>
+        <p class="text-xs font-mono text-[#525252] mt-2">
+          Catat alasan skip/missed untuk learning dan improve discipline.
+        </p>
+      </div>
+
+      <!-- Outcome Notes (if status is skipped/missed) -->
+      <div v-if="item.outcome && item.outcome.notes" class="mt-4 pt-4 border-t-[3px] border-black">
+        <h5 class="text-xs font-bold uppercase text-[#0a0a0a] mb-2 tracking-wide">
+          Outcome Notes
+        </h5>
+        <div class="bg-white border-[3px] border-black p-3">
+          <p class="text-sm font-mono text-[#0a0a0a] whitespace-pre-wrap">
+            {{ item.outcome.notes }}
+          </p>
+        </div>
+      </div>
     </div>
 
     <!-- Edit Modal -->
@@ -319,6 +392,15 @@ const handleCreateTrade = () => {
       :item="item"
       @close="showEditModal = false"
       @success="handleUpdate"
+    />
+
+    <!-- Mark Watchlist Item Modal -->
+    <MarkWatchlistItemModal
+      :show="showMarkModal"
+      :item="item"
+      :action="markAction"
+      @close="showMarkModal = false"
+      @confirm="handleMarkConfirm"
     />
 
     <!-- Delete Confirmation Modal -->
