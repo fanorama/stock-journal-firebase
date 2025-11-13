@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import MainLayout from '@/layouts/MainLayout.vue'
 import WatchlistSection from '@/components/planner/WatchlistSection.vue'
 import ChecklistSection from '@/components/planner/ChecklistSection.vue'
 import ReviewSection from '@/components/planner/ReviewSection.vue'
@@ -322,20 +321,7 @@ const handleCompletePlan = async () => {
 </script>
 
 <template>
-  <MainLayout>
-    <template #header-title>Daily Planner</template>
-
-    <template #header-actions>
-      <button
-        v-if="!isToday"
-        class="bg-[#3b82f6] border-[3px] border-black px-4 py-2 min-h-[44px] font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation"
-        @click="goToToday"
-      >
-        Today
-      </button>
-    </template>
-
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Date Selector -->
       <div
         class="bg-white border-[5px] border-black p-4 sm:p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
@@ -466,5 +452,4 @@ const handleCompletePlan = async () => {
         />
       </template>
     </div>
-  </MainLayout>
 </template>

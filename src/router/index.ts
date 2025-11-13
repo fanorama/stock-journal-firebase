@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import MainLayout from '@/layouts/MainLayout.vue'
 
 /**
  * Auth routes - accessible only when NOT authenticated
+ * These routes render AuthLayout within each view component
  */
 const authRoutes: RouteRecordRaw[] = [
   {
@@ -26,50 +28,50 @@ const authRoutes: RouteRecordRaw[] = [
 ]
 
 /**
- * Protected routes - require authentication
+ * Protected routes - nested under MainLayout for persistent layout with transitions
+ * MainLayout remains mounted while child routes change, enabling smooth content transitions
  */
-const protectedRoutes: RouteRecordRaw[] = [
-  {
-    path: '/',
-    name: 'dashboard',
-    component: () => import('@/views/DashboardView.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/portfolios',
-    name: 'portfolios',
-    component: () => import('@/views/PortfoliosView.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/trades',
-    name: 'trades',
-    component: () => import('@/views/TradesView.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/journals',
-    name: 'journals',
-    component: () => import('@/views/JournalsView.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/strategies',
-    name: 'strategies',
-    component: () => import('@/views/StrategiesView.vue'),
-    meta: { requiresAuth: true },
-  },
-  {
-    path: '/planner',
-    name: 'planner',
-    component: () => import('@/views/PlannerView.vue'),
-    meta: { requiresAuth: true },
-  },
-]
+const protectedRoutes: RouteRecordRaw = {
+  path: '/',
+  component: MainLayout,
+  meta: { requiresAuth: true },
+  children: [
+    {
+      path: '',
+      name: 'dashboard',
+      component: () => import('@/views/DashboardView.vue'),
+    },
+    {
+      path: 'portfolios',
+      name: 'portfolios',
+      component: () => import('@/views/PortfoliosView.vue'),
+    },
+    {
+      path: 'trades',
+      name: 'trades',
+      component: () => import('@/views/TradesView.vue'),
+    },
+    {
+      path: 'journals',
+      name: 'journals',
+      component: () => import('@/views/JournalsView.vue'),
+    },
+    {
+      path: 'strategies',
+      name: 'strategies',
+      component: () => import('@/views/StrategiesView.vue'),
+    },
+    {
+      path: 'planner',
+      name: 'planner',
+      component: () => import('@/views/PlannerView.vue'),
+    },
+  ],
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [...authRoutes, ...protectedRoutes],
+  routes: [...authRoutes, protectedRoutes],
 })
 
 /**

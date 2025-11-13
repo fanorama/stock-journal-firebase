@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import MainLayout from '@/layouts/MainLayout.vue'
 import StrategyCard from '@/components/strategy/StrategyCard.vue'
 import AddStrategyModal from '@/components/strategy/AddStrategyModal.vue'
 import EditStrategyModal from '@/components/strategy/EditStrategyModal.vue'
@@ -72,19 +71,7 @@ const handleDeleteStrategySuccess = () => {
 </script>
 
 <template>
-  <MainLayout>
-    <template #header-title>Strategies</template>
-
-    <template #header-actions>
-      <button
-        class="bg-[#f59e0b] border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
-        @click="handleAddStrategy"
-      >
-        + New Strategy
-      </button>
-    </template>
-
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Page Header -->
       <div class="bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <h2 class="text-2xl font-bold uppercase text-[#0a0a0a] mb-2 tracking-wide">
@@ -220,5 +207,4 @@ const handleDeleteStrategySuccess = () => {
       @close="showDeleteModal = false"
       @success="handleDeleteStrategySuccess"
     />
-  </MainLayout>
 </template>

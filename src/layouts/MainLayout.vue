@@ -1,13 +1,48 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePortfoliosStore } from '@/stores'
 import PortfolioSelector from '@/components/portfolio/PortfolioSelector.vue'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const portfoliosStore = usePortfoliosStore()
+
+// Debug: Log route changes untuk verify transition trigger
+if (import.meta.env.DEV) {
+  console.log('MainLayout mounted, current route:', route.fullPath)
+}
+
+// Transition hooks untuk debugging
+const onBeforeEnter = (el: Element) => {
+  if (import.meta.env.DEV) {
+    console.log('🎬 Transition: beforeEnter', {
+      route: route.name,
+      path: route.fullPath,
+      element: el.tagName
+    })
+  }
+}
+
+const onEnter = (el: Element) => {
+  if (import.meta.env.DEV) {
+    console.log('✅ Transition: enter', {
+      route: route.name,
+      path: route.fullPath
+    })
+  }
+}
+
+const onAfterEnter = (el: Element) => {
+  if (import.meta.env.DEV) {
+    console.log('🎉 Transition: afterEnter (complete)', {
+      route: route.name,
+      path: route.fullPath
+    })
+  }
+}
 
 /**
  * Initialize portfolios on mount
@@ -168,7 +203,21 @@ const isActiveRoute = (path: string) => {
 
       <!-- Page Content -->
       <main class="p-4 lg:p-6">
-        <slot />
+        <!-- Content Transition Wrapper: animates only page content, not sidebar/header -->
+        <RouterView v-slot="{ Component }">
+          <Transition
+            name="page"
+            mode="out-in"
+            @before-enter="onBeforeEnter"
+            @enter="onEnter"
+            @after-enter="onAfterEnter"
+          >
+            <!-- Wrap component in div to ensure single root element for transition -->
+            <div :key="route.fullPath">
+              <component :is="Component" />
+            </div>
+          </Transition>
+        </RouterView>
       </main>
     </div>
   </div>
@@ -177,5 +226,54 @@ const isActiveRoute = (path: string) => {
 <style scoped>
 .main-layout {
   min-height: 100vh;
+}
+</style>
+
+<style>
+/**
+ * Page Transition Animations - MUST BE GLOBAL (not scoped)
+ * Fade-in-up effect for page content only (sidebar/header remain static)
+ */
+
+/* Enter transition: fade in from below */
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.page-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Leave transition: fade out upward (faster) */
+.page-leave-active {
+  transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/**
+ * Accessibility: Disable animations for users who prefer reduced motion
+ */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter-active,
+  .page-leave-active {
+    transition: none !important;
+  }
+
+  .page-enter-from,
+  .page-enter-to,
+  .page-leave-to {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 </style>

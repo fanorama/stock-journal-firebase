@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import MainLayout from '@/layouts/MainLayout.vue'
 import TodaysPlanWidget from '@/components/dashboard/TodaysPlanWidget.vue'
 import { usePortfoliosStore, useTradesStore, useJournalsStore } from '@/stores'
 
@@ -44,10 +43,7 @@ const navigateTo = (path: string) => {
 </script>
 
 <template>
-  <MainLayout>
-    <template #header-title>Dashboard</template>
-
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Welcome Header -->
       <div class="bg-white border-[5px] border-black p-4 sm:p-6 lg:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-wide text-[#0a0a0a] mb-2">
@@ -266,6 +262,5 @@ const navigateTo = (path: string) => {
           </div>
         </div>
       </div>
-    </div>
-  </MainLayout>
+  </div>
 </template>

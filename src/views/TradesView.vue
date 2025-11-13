@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import MainLayout from '@/layouts/MainLayout.vue'
 import AddTradeModal from '@/components/trade/AddTradeModal.vue'
 import EditTradeModal from '@/components/trade/EditTradeModal.vue'
 import DeleteTradeConfirmation from '@/components/trade/DeleteTradeConfirmation.vue'
@@ -178,19 +177,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <MainLayout>
-    <template #header-title>Trades</template>
-
-    <template #header-actions>
-      <button
-        class="bg-[#10b981] border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
-        @click="handleAddTrade"
-      >
-        + New Trade
-      </button>
-    </template>
-
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Page Header -->
       <div class="bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <h2 class="text-2xl font-bold uppercase text-[#0a0a0a] mb-2 tracking-wide">
@@ -459,5 +446,4 @@ onMounted(() => {
       @close="showDeleteModal = false"
       @success="handleDeleteTradeSuccess"
     />
-  </MainLayout>
 </template>

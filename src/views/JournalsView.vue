@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import MainLayout from '@/layouts/MainLayout.vue'
 import AddJournalModal from '@/components/journal/AddJournalModal.vue'
 import EditJournalModal from '@/components/journal/EditJournalModal.vue'
 import DeleteJournalConfirmation from '@/components/journal/DeleteJournalConfirmation.vue'
@@ -96,19 +95,7 @@ const formatDate = (timestamp: any): string => {
 </script>
 
 <template>
-  <MainLayout>
-    <template #header-title>Trading Journal</template>
-
-    <template #header-actions>
-      <button
-        class="bg-[#a855f7] border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
-        @click="handleAddJournal"
-      >
-        + New Journal Entry
-      </button>
-    </template>
-
-    <div class="space-y-6">
+  <div class="space-y-6">
       <!-- Page Header -->
       <div class="bg-white border-[5px] border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
         <h2 class="text-2xl font-bold uppercase text-[#0a0a0a] mb-2 tracking-wide">
@@ -350,5 +337,4 @@ const formatDate = (timestamp: any): string => {
       @close="handleModalClose"
       @success="handleDeleteSuccess"
     />
-  </MainLayout>
 </template>
