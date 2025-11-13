@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import type { WatchlistItem } from '@/types'
 import EditWatchlistItemModal from './EditWatchlistItemModal.vue'
 import StrategyBadgePopover from './StrategyBadgePopover.vue'
@@ -7,9 +8,11 @@ import StrategyBadgePopover from './StrategyBadgePopover.vue'
 interface Props {
   item: WatchlistItem
   isExpanded: boolean
+  planId: string
 }
 
 const props = defineProps<Props>()
+const router = useRouter()
 
 const emit = defineEmits<{
   toggleExpand: []
@@ -81,6 +84,26 @@ const handleUpdate = (updates: Partial<WatchlistItem>) => {
 const handleDelete = () => {
   emit('delete', props.item.id)
   showDeleteConfirm.value = false
+}
+
+/**
+ * Handle create trade from watchlist item
+ */
+const handleCreateTrade = () => {
+  // Navigate to trades page dengan prefill query params
+  router.push({
+    path: '/trades',
+    query: {
+      symbol: props.item.symbol,
+      strategyId: props.item.strategyId,
+      strategyName: props.item.strategyName,
+      notes: props.item.notes,
+      targetEntry: props.item.targetEntry?.toString(),
+      targetExit: props.item.targetExit?.toString(),
+      planId: props.planId,
+      watchlistItemId: props.item.id,
+    },
+  })
 }
 </script>
 
@@ -178,6 +201,29 @@ const handleDelete = () => {
               stroke-linecap="round"
               stroke-linejoin="round"
               d="m19.5 8.25-7.5 7.5-7.5-7.5"
+            />
+          </svg>
+        </button>
+
+        <!-- Create Trade Button (only show if status is 'planned') -->
+        <button
+          v-if="item.status === 'planned'"
+          class="p-1 border-[2px] border-black hover:bg-[#10b981] hover:text-white transition-colors"
+          title="Create Trade"
+          @click="handleCreateTrade"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            class="w-4 h-4"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
         </button>

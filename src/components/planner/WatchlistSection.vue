@@ -77,6 +77,7 @@ const handleReorder = (items: WatchlistItem[]) => {
     <!-- Watchlist Table -->
     <WatchlistTable
       :watchlist="watchlist"
+      :plan-id="planId"
       :is-loading="isLoading"
       @update="handleUpdate"
       @delete="handleDelete"

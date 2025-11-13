@@ -6,6 +6,7 @@ import draggable from 'vuedraggable'
 
 interface Props {
   watchlist: WatchlistItem[]
+  planId: string
   isLoading?: boolean
 }
 
@@ -123,6 +124,7 @@ const handleDelete = (itemId: string) => {
         <template #item="{ element: item }">
           <WatchlistItemRow
             :item="item"
+            :plan-id="planId"
             :is-expanded="expandedRows.has(item.id)"
             @toggle-expand="toggleExpand(item.id)"
             @update="handleUpdate"

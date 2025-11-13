@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import type { TradeInput } from '@/types'
 import { useTradesStore } from '@/stores'
 import { usePortfoliosStore } from '@/stores'
@@ -7,6 +7,14 @@ import StrategySelector from '@/components/strategy/StrategySelector.vue'
 
 interface Props {
   show: boolean
+  prefillData?: {
+    symbol?: string
+    strategyId?: string
+    strategyName?: string
+    notes?: string
+    targetEntry?: number
+    targetExit?: number
+  }
 }
 
 const props = defineProps<Props>()
@@ -37,6 +45,31 @@ const errors = ref<Partial<Record<keyof Omit<TradeInput, 'portfolioId'>, string>
 // Local loading state
 const isSubmitting = ref(false)
 const submitError = ref<string | null>(null)
+
+/**
+ * Watch for modal show and apply prefill data
+ */
+watch(
+  () => props.show,
+  (newShow) => {
+    if (newShow && props.prefillData) {
+      // Apply prefill data when modal opens
+      if (props.prefillData.symbol) {
+        formData.value.symbol = props.prefillData.symbol
+      }
+      if (props.prefillData.strategyId) {
+        formData.value.strategyId = props.prefillData.strategyId
+      }
+      if (props.prefillData.notes) {
+        formData.value.notes = props.prefillData.notes
+      }
+      if (props.prefillData.targetEntry) {
+        formData.value.price = props.prefillData.targetEntry
+      }
+      // Note: targetExit could be used for notes or future fields
+    }
+  }
+)
 
 /**
  * Common IDX stock symbols for autocomplete

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import MainLayout from '@/layouts/MainLayout.vue'
 import AddTradeModal from '@/components/trade/AddTradeModal.vue'
 import EditTradeModal from '@/components/trade/EditTradeModal.vue'
@@ -7,6 +8,8 @@ import DeleteTradeConfirmation from '@/components/trade/DeleteTradeConfirmation.
 import { useTradesStore, usePortfoliosStore } from '@/stores'
 import type { Trade } from '@/types'
 
+const route = useRoute()
+const router = useRouter()
 const tradesStore = useTradesStore()
 const portfoliosStore = usePortfoliosStore()
 
@@ -15,6 +18,18 @@ const showAddModal = ref(false)
 const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 const selectedTradeId = ref<string | null>(null)
+
+// Prefill data from query params (for quick trade creation from planner)
+const prefillData = ref<{
+  symbol?: string
+  strategyId?: string
+  strategyName?: string
+  notes?: string
+  targetEntry?: number
+  targetExit?: number
+  planId?: string
+  watchlistItemId?: string
+} | undefined>(undefined)
 
 /**
  * Get selected trade object
@@ -34,8 +49,34 @@ const handleAddTrade = () => {
 /**
  * Handle add trade success
  */
-const handleAddTradeSuccess = (tradeId: string) => {
+const handleAddTradeSuccess = async (tradeId: string) => {
   console.log('Trade created successfully:', tradeId)
+
+  // If created from planner watchlist, link the trade
+  if (prefillData.value?.planId && prefillData.value?.watchlistItemId) {
+    try {
+      // Import dynamic to avoid circular dependency
+      const { useDailyPlansStore } = await import('@/stores')
+      const dailyPlansStore = useDailyPlansStore()
+
+      await dailyPlansStore.linkTradeToWatchlist(
+        prefillData.value.planId,
+        prefillData.value.watchlistItemId,
+        tradeId
+      )
+
+      console.log('Trade linked to watchlist item successfully')
+
+      // Navigate back to planner
+      router.push('/planner')
+    } catch (error) {
+      console.error('Failed to link trade to watchlist:', error)
+      // Still consider it a success, just log the error
+    }
+  }
+
+  // Clear prefill data
+  prefillData.value = undefined
 }
 
 /**
@@ -108,6 +149,32 @@ const calculateTradeTotal = (trade: Trade): number => {
     return subtotal - fees
   }
 }
+
+/**
+ * On mounted: check for prefill query params from planner
+ */
+onMounted(() => {
+  const { symbol, strategyId, strategyName, notes, targetEntry, targetExit, planId, watchlistItemId } = route.query
+
+  if (symbol) {
+    prefillData.value = {
+      symbol: String(symbol),
+      strategyId: strategyId ? String(strategyId) : undefined,
+      strategyName: strategyName ? String(strategyName) : undefined,
+      notes: notes ? String(notes) : undefined,
+      targetEntry: targetEntry ? Number(targetEntry) : undefined,
+      targetExit: targetExit ? Number(targetExit) : undefined,
+      planId: planId ? String(planId) : undefined,
+      watchlistItemId: watchlistItemId ? String(watchlistItemId) : undefined,
+    }
+
+    // Auto-open add modal when prefill data exists
+    showAddModal.value = true
+
+    // Clean up URL (remove query params)
+    router.replace({ query: {} })
+  }
+})
 </script>
 
 <template>
@@ -372,6 +439,7 @@ const calculateTradeTotal = (trade: Trade): number => {
     <!-- Add Trade Modal -->
     <AddTradeModal
       :show="showAddModal"
+      :prefill-data="prefillData"
       @close="showAddModal = false"
       @success="handleAddTradeSuccess"
     />
