@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import MainLayout from '@/layouts/MainLayout.vue'
+import TodaysPlanWidget from '@/components/dashboard/TodaysPlanWidget.vue'
 import { usePortfoliosStore, useTradesStore, useJournalsStore } from '@/stores'
 
 const router = useRouter()
@@ -56,6 +57,9 @@ const navigateTo = (path: string) => {
           Track your trading performance and improve your strategy
         </p>
       </div>
+
+      <!-- Today's Plan Widget -->
+      <TodaysPlanWidget />
 
       <!-- No Active Portfolio Warning -->
       <div
