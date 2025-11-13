@@ -243,21 +243,41 @@ const formatNumber = (value: number): string => {
   <Transition name="fade">
     <div
       v-if="show"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
+      class="fixed inset-0 bg-black/50 sm:flex sm:items-center sm:justify-center z-50 p-0 sm:p-4 overflow-y-auto"
       @click.self="handleClose"
     >
       <!-- Modal Container -->
       <div
-        class="bg-white border-[5px] border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        class="h-full sm:h-auto bg-white border-0 sm:border-[5px] border-black sm:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] sm:max-w-2xl w-full sm:max-h-[90vh] overflow-y-auto sm:my-8"
       >
         <!-- Modal Header -->
-        <div class="bg-[#10b981] border-b-[5px] border-black p-6 sticky top-0 z-10">
+        <div class="bg-[#10b981] border-b-[5px] border-black p-4 sm:p-6 sticky top-0 z-10">
           <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold uppercase text-white tracking-wide">
+            <!-- Back Button - Mobile Only -->
+            <button
+              class="sm:hidden bg-white border-[3px] border-black p-2 min-h-[44px] min-w-[44px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0px_0px_rgba(0,0,0,1)] transition-all duration-100 touch-manipulation flex items-center justify-center"
+              :disabled="isSubmitting"
+              @click="handleClose"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2.5"
+                stroke="currentColor"
+                class="w-5 h-5"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+
+            <h2 class="text-xl sm:text-2xl font-bold uppercase text-white tracking-wide">
               Tambah Trade Baru
             </h2>
+
+            <!-- Close Button - Desktop Only -->
             <button
-              class="bg-white border-[3px] border-black p-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all duration-100"
+              class="hidden sm:block bg-white border-[3px] border-black p-2 min-h-[44px] min-w-[44px] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition-all duration-100 touch-manipulation"
               :disabled="isSubmitting"
               @click="handleClose"
             >
@@ -276,7 +296,7 @@ const formatNumber = (value: number): string => {
         </div>
 
         <!-- Modal Body -->
-        <div class="p-6 space-y-6">
+        <div class="p-4 sm:p-6 space-y-4 sm:space-y-6">
           <!-- Submit Error Alert -->
           <div
             v-if="submitError"
@@ -302,7 +322,7 @@ const formatNumber = (value: number): string => {
           </div>
 
           <!-- Form -->
-          <form @submit.prevent="handleSubmit" class="space-y-6">
+          <form @submit.prevent="handleSubmit" class="space-y-4 sm:space-y-6">
             <!-- Trade Type -->
             <div>
               <label class="block text-sm font-bold uppercase tracking-wide text-[#0a0a0a] mb-2">
@@ -311,7 +331,7 @@ const formatNumber = (value: number): string => {
               <div class="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  class="border-[3px] border-black px-6 py-4 font-bold uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-100"
+                  class="border-[3px] border-black px-6 py-4 min-h-[44px] font-bold uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation"
                   :class="formData.type === 'BUY' ? 'bg-[#10b981] text-white' : 'bg-white text-[#0a0a0a]'"
                   :disabled="isSubmitting"
                   @click="formData.type = 'BUY'"
@@ -320,7 +340,7 @@ const formatNumber = (value: number): string => {
                 </button>
                 <button
                   type="button"
-                  class="border-[3px] border-black px-6 py-4 font-bold uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all duration-100"
+                  class="border-[3px] border-black px-6 py-4 min-h-[44px] font-bold uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation"
                   :class="formData.type === 'SELL' ? 'bg-[#ef4444] text-white' : 'bg-white text-[#0a0a0a]'"
                   :disabled="isSubmitting"
                   @click="formData.type = 'SELL'"
@@ -331,7 +351,7 @@ const formatNumber = (value: number): string => {
             </div>
 
             <!-- Symbol and Date -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <!-- Symbol -->
               <div>
                 <label class="block text-sm font-bold uppercase tracking-wide text-[#0a0a0a] mb-2">
@@ -341,7 +361,7 @@ const formatNumber = (value: number): string => {
                   v-model="formData.symbol"
                   type="text"
                   list="symbol-suggestions"
-                  class="w-full border-[3px] border-black p-3 font-mono uppercase focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all"
+                  class="w-full border-[3px] border-black p-3 min-h-[44px] font-mono uppercase focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all touch-manipulation"
                   :class="{ 'border-[#ef4444] ring-2 ring-[#ef4444]': errors.symbol }"
                   placeholder="e.g., BBCA"
                   maxlength="10"
@@ -363,7 +383,7 @@ const formatNumber = (value: number): string => {
                 <input
                   v-model="dateInput"
                   type="date"
-                  class="w-full border-[3px] border-black p-3 font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all"
+                  class="w-full border-[3px] border-black p-3 min-h-[44px] font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all touch-manipulation"
                   :class="{ 'border-[#ef4444] ring-2 ring-[#ef4444]': errors.date }"
                   :disabled="isSubmitting"
                 />
@@ -374,7 +394,7 @@ const formatNumber = (value: number): string => {
             </div>
 
             <!-- Quantity and Price -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <!-- Quantity -->
               <div>
                 <label class="block text-sm font-bold uppercase tracking-wide text-[#0a0a0a] mb-2">
@@ -383,8 +403,9 @@ const formatNumber = (value: number): string => {
                 <input
                   v-model.number="formData.quantity"
                   type="number"
+                  inputmode="numeric"
                   step="1"
-                  class="w-full border-[3px] border-black p-3 font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all"
+                  class="w-full border-[3px] border-black p-3 min-h-[44px] font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all touch-manipulation"
                   :class="{ 'border-[#ef4444] ring-2 ring-[#ef4444]': errors.quantity }"
                   placeholder="100"
                   :disabled="isSubmitting"
@@ -402,8 +423,9 @@ const formatNumber = (value: number): string => {
                 <input
                   v-model.number="formData.price"
                   type="number"
+                  inputmode="decimal"
                   step="1"
-                  class="w-full border-[3px] border-black p-3 font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all"
+                  class="w-full border-[3px] border-black p-3 min-h-[44px] font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all touch-manipulation"
                   :class="{ 'border-[#ef4444] ring-2 ring-[#ef4444]': errors.price }"
                   placeholder="8500"
                   :disabled="isSubmitting"
@@ -425,8 +447,9 @@ const formatNumber = (value: number): string => {
               <input
                 v-model.number="formData.fees"
                 type="number"
+                inputmode="decimal"
                 step="1"
-                class="w-full border-[3px] border-black p-3 font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all"
+                class="w-full border-[3px] border-black p-3 min-h-[44px] font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all touch-manipulation"
                 :class="{ 'border-[#ef4444] ring-2 ring-[#ef4444]': errors.fees }"
                 placeholder="0"
                 :disabled="isSubmitting"
@@ -463,7 +486,7 @@ const formatNumber = (value: number): string => {
               <textarea
                 v-model="formData.notes"
                 rows="3"
-                class="w-full border-[3px] border-black p-3 font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all resize-none"
+                class="w-full border-[3px] border-black p-3 min-h-[80px] font-mono focus:outline-none focus:ring-4 focus:ring-[#10b981] transition-all resize-none touch-manipulation"
                 :class="{ 'border-[#ef4444] ring-2 ring-[#ef4444]': errors.notes }"
                 placeholder="Catatan singkat tentang trade ini..."
                 maxlength="500"
@@ -483,11 +506,11 @@ const formatNumber = (value: number): string => {
         </div>
 
         <!-- Modal Footer -->
-        <div class="bg-[#fafafa] border-t-[5px] border-black p-6 sticky bottom-0">
-          <div class="flex gap-4 justify-end">
+        <div class="bg-[#fafafa] border-t-[5px] border-black p-4 sm:p-6 sticky bottom-0">
+          <div class="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
             <button
               type="button"
-              class="bg-white border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full sm:w-auto bg-white border-[3px] border-black px-6 py-3 min-h-[44px] font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
               :disabled="isSubmitting"
               @click="handleClose"
             >
@@ -495,7 +518,7 @@ const formatNumber = (value: number): string => {
             </button>
             <button
               type="submit"
-              class="bg-[#10b981] border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              class="w-full sm:w-auto bg-[#10b981] border-[3px] border-black px-6 py-3 min-h-[44px] font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               :disabled="isSubmitting"
               @click="handleSubmit"
             >

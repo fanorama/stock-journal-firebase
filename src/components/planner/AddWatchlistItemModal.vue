@@ -165,19 +165,38 @@ const handleClose = () => {
   <Teleport to="body">
     <div
       v-if="show"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto"
+      class="fixed inset-0 bg-black/50 sm:flex sm:items-center sm:justify-center z-50 p-0 sm:p-4 overflow-y-auto"
       @click.self="handleClose"
     >
       <div
-        class="bg-white border-[5px] border-black p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] my-8"
+        class="h-full sm:h-auto bg-white border-0 sm:border-[5px] border-black p-4 sm:p-6 sm:max-w-2xl w-full sm:max-h-[90vh] overflow-y-auto sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] sm:my-8"
       >
         <!-- Modal Header -->
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-2xl font-bold uppercase text-[#0a0a0a] tracking-wide">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <!-- Back Button - Mobile Only -->
+          <button
+            class="sm:hidden p-2 min-h-[44px] min-w-[44px] border-[3px] border-black hover:bg-[#fafafa] active:bg-[#e5e5e5] transition-colors touch-manipulation flex items-center justify-center"
+            @click="handleClose"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
+          <h3 class="text-xl sm:text-2xl font-bold uppercase text-[#0a0a0a] tracking-wide">
             Add to Watchlist
           </h3>
+
+          <!-- Close Button - Desktop Only -->
           <button
-            class="p-2 border-[3px] border-black hover:bg-[#fafafa] transition-colors"
+            class="hidden sm:block p-2 min-h-[44px] min-w-[44px] border-[3px] border-black hover:bg-[#fafafa] transition-colors touch-manipulation"
             @click="handleClose"
           >
             <svg
@@ -204,7 +223,7 @@ const handleClose = () => {
               v-model="formData.symbol"
               type="text"
               placeholder="e.g., BBCA, BMRI, TLKM"
-              class="w-full border-[3px] border-black p-3 font-mono uppercase text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
+              class="w-full border-[3px] border-black p-3 min-h-[44px] font-mono uppercase text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all touch-manipulation"
               :class="{ 'border-[#ef4444]': errors.symbol }"
             />
             <p v-if="errors.symbol" class="text-xs text-[#ef4444] font-mono mt-1">
@@ -219,7 +238,7 @@ const handleClose = () => {
             </label>
             <select
               v-model="formData.strategyId"
-              class="w-full border-[3px] border-black p-3 font-mono text-[#0a0a0a] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all bg-white"
+              class="w-full border-[3px] border-black p-3 min-h-[44px] font-mono text-[#0a0a0a] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all bg-white touch-manipulation"
               :class="{ 'border-[#ef4444]': errors.strategyId }"
             >
               <option value="">Pilih Strategy</option>
@@ -274,7 +293,7 @@ const handleClose = () => {
               v-model="formData.notes"
               rows="3"
               placeholder="Why this stock matches the strategy? Key levels to watch?"
-              class="w-full border-[3px] border-black p-3 font-mono text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all resize-none"
+              class="w-full border-[3px] border-black p-3 min-h-[80px] font-mono text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all resize-none touch-manipulation"
               :class="{ 'border-[#ef4444]': errors.notes }"
             ></textarea>
             <p v-if="errors.notes" class="text-xs text-[#ef4444] font-mono mt-1">
@@ -286,7 +305,7 @@ const handleClose = () => {
           </div>
 
           <!-- Target Prices (Optional) -->
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <!-- Target Entry -->
             <div>
               <label class="block text-sm font-bold uppercase tracking-wide text-[#0a0a0a] mb-2">
@@ -295,9 +314,10 @@ const handleClose = () => {
               <input
                 v-model.number="formData.targetEntry"
                 type="number"
+                inputmode="decimal"
                 step="any"
                 placeholder="e.g., 8500"
-                class="w-full border-[3px] border-black p-3 font-mono text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
+                class="w-full border-[3px] border-black p-3 min-h-[44px] font-mono text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all touch-manipulation"
                 :class="{ 'border-[#ef4444]': errors.targetEntry }"
               />
               <p v-if="errors.targetEntry" class="text-xs text-[#ef4444] font-mono mt-1">
@@ -313,9 +333,10 @@ const handleClose = () => {
               <input
                 v-model.number="formData.targetExit"
                 type="number"
+                inputmode="decimal"
                 step="any"
                 placeholder="e.g., 9000"
-                class="w-full border-[3px] border-black p-3 font-mono text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all"
+                class="w-full border-[3px] border-black p-3 min-h-[44px] font-mono text-[#0a0a0a] placeholder:text-[#a3a3a3] focus:outline-none focus:ring-4 focus:ring-[#3b82f6] transition-all touch-manipulation"
                 :class="{ 'border-[#ef4444]': errors.targetExit }"
               />
               <p v-if="errors.targetExit" class="text-xs text-[#ef4444] font-mono mt-1">
@@ -325,10 +346,10 @@ const handleClose = () => {
           </div>
 
           <!-- Form Actions -->
-          <div class="flex gap-3 justify-end pt-4 border-t-[3px] border-black">
+          <div class="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end pt-4 border-t-[3px] border-black">
             <button
               type="button"
-              class="bg-[#fafafa] border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+              class="w-full sm:w-auto bg-[#fafafa] border-[3px] border-black px-6 py-3 min-h-[44px] font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation"
               @click="handleClose"
             >
               Batal
@@ -336,7 +357,7 @@ const handleClose = () => {
             <button
               type="submit"
               :disabled="isSubmitting || !strategiesStore.hasStrategies"
-              class="bg-[#3b82f6] border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full sm:w-auto bg-[#3b82f6] border-[3px] border-black px-6 py-3 min-h-[44px] font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {{ isSubmitting ? 'Adding...' : 'Add to Watchlist' }}
             </button>

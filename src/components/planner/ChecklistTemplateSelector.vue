@@ -100,24 +100,43 @@ const handleClose = () => {
   <Teleport to="body">
     <div
       v-if="show"
-      class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      class="fixed inset-0 bg-black/50 sm:flex sm:items-center sm:justify-center z-50 p-0 sm:p-4"
       @click.self="handleClose"
     >
       <div
-        class="bg-white border-[5px] border-black p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
+        class="h-full sm:h-auto bg-white border-0 sm:border-[5px] border-black p-4 sm:p-6 sm:max-w-3xl w-full sm:max-h-[90vh] overflow-y-auto sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
       >
         <!-- Modal Header -->
-        <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center justify-between mb-4 sm:mb-6">
+          <!-- Back Button - Mobile Only -->
+          <button
+            class="sm:hidden p-2 min-h-[44px] min-w-[44px] border-[3px] border-black hover:bg-[#fafafa] active:bg-[#e5e5e5] transition-colors touch-manipulation flex items-center justify-center"
+            @click="handleClose"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
           <div>
-            <h3 class="text-2xl font-bold uppercase text-[#0a0a0a] tracking-wide">
+            <h3 class="text-xl sm:text-2xl font-bold uppercase text-[#0a0a0a] tracking-wide">
               Choose Checklist Template
             </h3>
-            <p class="text-sm font-mono text-[#525252] mt-1">
+            <p class="text-xs sm:text-sm font-mono text-[#525252] mt-1">
               Pilih template sesuai trading style kamu
             </p>
           </div>
+
+          <!-- Close Button - Desktop Only -->
           <button
-            class="p-2 border-[3px] border-black hover:bg-[#fafafa] transition-colors"
+            class="hidden sm:block p-2 min-h-[44px] min-w-[44px] border-[3px] border-black hover:bg-[#fafafa] transition-colors touch-manipulation"
             @click="handleClose"
           >
             <svg
@@ -137,7 +156,7 @@ const handleClose = () => {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <!-- Basic Template -->
           <button
-            class="text-left border-[5px] border-black p-4 transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px]"
+            class="text-left border-[5px] border-black p-4 transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px] touch-manipulation"
             :class="[
               templates.basic.color,
               selectedTemplate === 'basic'
@@ -172,7 +191,7 @@ const handleClose = () => {
 
           <!-- Technical Template -->
           <button
-            class="text-left border-[5px] border-black p-4 transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px]"
+            class="text-left border-[5px] border-black p-4 transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px] touch-manipulation"
             :class="[
               templates.technical.color,
               selectedTemplate === 'technical'
@@ -207,7 +226,7 @@ const handleClose = () => {
 
           <!-- Fundamental Template -->
           <button
-            class="text-left border-[5px] border-black p-4 transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px]"
+            class="text-left border-[5px] border-black p-4 transition-all duration-100 hover:translate-x-[2px] hover:translate-y-[2px] touch-manipulation"
             :class="[
               templates.fundamental.color,
               selectedTemplate === 'fundamental'
@@ -270,16 +289,16 @@ const handleClose = () => {
         </div>
 
         <!-- Actions -->
-        <div class="flex gap-3 justify-end">
+        <div class="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
           <button
-            class="bg-[#fafafa] border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100"
+            class="w-full sm:w-auto bg-[#fafafa] border-[3px] border-black px-6 py-3 min-h-[44px] font-bold uppercase text-sm tracking-wide text-[#0a0a0a] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation"
             @click="handleClose"
           >
             Cancel
           </button>
           <button
             :disabled="!selectedTemplate"
-            class="bg-[#3b82f6] border-[3px] border-black px-6 py-3 font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="w-full sm:w-auto bg-[#3b82f6] border-[3px] border-black px-6 py-3 min-h-[44px] font-bold uppercase text-sm tracking-wide text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all duration-100 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
             @click="applyTemplate"
           >
             Apply Template
