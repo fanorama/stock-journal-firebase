@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import type { StrategyInput, StrategyRule } from '@/types'
 import { useStrategiesStore } from '@/stores'
 import RuleBuilder from './RuleBuilder.vue'
+import { toast } from 'vue-sonner'
 
 interface Props {
   show: boolean
@@ -99,10 +100,13 @@ const handleSubmit = async () => {
     }
     errors.value = {}
 
+    toast.success('Strategy berhasil dibuat!')
     emit('success', strategyId)
     emit('close')
   } catch (err: any) {
-    submitError.value = err.message || 'Gagal membuat strategy'
+    const errorMessage = err.message || 'Gagal membuat strategy'
+    submitError.value = errorMessage
+    toast.error(`Gagal membuat strategy: ${errorMessage}`)
   } finally {
     isSubmitting.value = false
   }

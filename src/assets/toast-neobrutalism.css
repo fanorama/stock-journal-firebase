@@ -1,0 +1,331 @@
+/**
+ * Neobrutalism Toast Styling for Vue-Sonner
+ * Consistent dengan design system yang sudah ada di modal & button components
+ */
+
+/* ========================================
+   1. DESIGN TOKENS (CSS Variables)
+   ======================================== */
+:root {
+  /* Spacing */
+  --toast-padding: 16px 20px;
+  --toast-gap: 12px;
+
+  /* Border */
+  --toast-border-width: 3px;
+  --toast-border-color: #000000;
+  --toast-border-radius: 0px;
+
+  /* Shadow - Hard box shadow (neobrutalism signature) */
+  --toast-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+  --toast-shadow-hover: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+
+  /* Colors - Success (Green) */
+  --toast-success-bg: #10b981;
+  --toast-success-text: #ffffff;
+  --toast-success-border: #000000;
+
+  /* Colors - Error (Red) */
+  --toast-error-bg: #ef4444;
+  --toast-error-text: #ffffff;
+  --toast-error-border: #000000;
+
+  /* Colors - Warning (Yellow) */
+  --toast-warning-bg: #fef3c7;
+  --toast-warning-text: #000000;
+  --toast-warning-border: #000000;
+
+  /* Colors - Info (Blue) */
+  --toast-info-bg: #60a5fa;
+  --toast-info-text: #ffffff;
+  --toast-info-border: #000000;
+
+  /* Typography */
+  --toast-font-weight: 600;
+  --toast-font-size: 14px;
+  --toast-line-height: 1.5;
+
+  /* Animation */
+  --toast-animation-duration: 250ms;
+  --toast-animation-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========================================
+   2. BASE TOAST STRUCTURE
+   ======================================== */
+
+/* Override default vue-sonner styling */
+[data-sonner-toast][data-styled='true'] {
+  /* Layout */
+  padding: var(--toast-padding) !important;
+
+  /* Border - Thick black border (neobrutalism) */
+  border: var(--toast-border-width) solid var(--toast-border-color) !important;
+  border-radius: var(--toast-border-radius) !important;
+
+  /* Shadow - Hard box shadow (no blur) */
+  box-shadow: var(--toast-shadow) !important;
+
+  /* Typography */
+  font-weight: var(--toast-font-weight) !important;
+  font-size: var(--toast-font-size) !important;
+  line-height: var(--toast-line-height) !important;
+
+  /* Smooth transition untuk hover effect */
+  transition: all var(--toast-animation-duration) var(--toast-animation-easing) !important;
+
+  /* Remove default background (will be set per type) */
+  background: transparent !important;
+}
+
+/* Toast content alignment */
+[data-sonner-toast] [data-content] {
+  display: flex;
+  align-items: center;
+  gap: var(--toast-gap);
+}
+
+/* Toast title styling */
+[data-sonner-toast] [data-title] {
+  font-weight: var(--toast-font-weight);
+  letter-spacing: 0.3px;
+}
+
+/* Toast description styling */
+[data-sonner-toast] [data-description] {
+  opacity: 0.9;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* ========================================
+   3. HOVER EFFECT - Button Press Simulation
+   ======================================== */
+
+/* Hover: translate shadow untuk simulasi button press */
+[data-sonner-toast][data-styled='true']:hover {
+  transform: translate(2px, 2px);
+  box-shadow: var(--toast-shadow-hover) !important;
+  cursor: pointer;
+}
+
+/* Active state */
+[data-sonner-toast][data-styled='true']:active {
+  transform: translate(4px, 4px);
+  box-shadow: none !important;
+}
+
+/* ========================================
+   4. TYPE-SPECIFIC STYLING
+   ======================================== */
+
+/* Success Toast - Green */
+[data-sonner-toast][data-type='success'] {
+  background-color: var(--toast-success-bg) !important;
+  color: var(--toast-success-text) !important;
+  border-color: var(--toast-success-border) !important;
+}
+
+/* Error Toast - Red */
+[data-sonner-toast][data-type='error'] {
+  background-color: var(--toast-error-bg) !important;
+  color: var(--toast-error-text) !important;
+  border-color: var(--toast-error-border) !important;
+}
+
+/* Warning Toast - Yellow with black text */
+[data-sonner-toast][data-type='warning'] {
+  background-color: var(--toast-warning-bg) !important;
+  color: var(--toast-warning-text) !important;
+  border-color: var(--toast-warning-border) !important;
+}
+
+/* Info Toast - Blue */
+[data-sonner-toast][data-type='info'] {
+  background-color: var(--toast-info-bg) !important;
+  color: var(--toast-info-text) !important;
+  border-color: var(--toast-info-border) !important;
+}
+
+/* Loading Toast - Use info colors */
+[data-sonner-toast][data-type='loading'] {
+  background-color: var(--toast-info-bg) !important;
+  color: var(--toast-info-text) !important;
+  border-color: var(--toast-info-border) !important;
+}
+
+/* ========================================
+   5. ICON STYLING
+   ======================================== */
+
+/* Icon container */
+[data-sonner-toast] [data-icon] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+/* Success icon - make it white */
+[data-sonner-toast][data-type='success'] [data-icon] svg {
+  color: var(--toast-success-text);
+}
+
+/* Error icon - make it white */
+[data-sonner-toast][data-type='error'] [data-icon] svg {
+  color: var(--toast-error-text);
+}
+
+/* Warning icon - make it black */
+[data-sonner-toast][data-type='warning'] [data-icon] svg {
+  color: var(--toast-warning-text);
+}
+
+/* Info icon - make it white */
+[data-sonner-toast][data-type='info'] [data-icon] svg {
+  color: var(--toast-info-text);
+}
+
+/* ========================================
+   6. CLOSE BUTTON STYLING
+   ======================================== */
+
+/* Close button */
+[data-sonner-toast] [data-close-button] {
+  background: rgba(0, 0, 0, 0.1) !important;
+  border: 2px solid rgba(0, 0, 0, 0.2) !important;
+  border-radius: 0px !important;
+  color: inherit !important;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 150ms ease !important;
+}
+
+/* Close button hover */
+[data-sonner-toast] [data-close-button]:hover {
+  background: rgba(0, 0, 0, 0.2) !important;
+  transform: scale(1.1);
+}
+
+/* Close button untuk warning (black text) */
+[data-sonner-toast][data-type='warning'] [data-close-button] {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-sonner-toast][data-type='warning'] [data-close-button]:hover {
+  background: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ========================================
+   7. ANIMATION CUSTOMIZATION
+   ======================================== */
+
+/* Container untuk smooth stacking */
+[data-sonner-toaster][data-theme] {
+  --normal-bg: transparent;
+  --normal-border: transparent;
+  --normal-text: inherit;
+}
+
+/* Enter animation - Snappy slide in from right */
+@keyframes toast-enter-neobrutalism {
+  from {
+    opacity: 0;
+    transform: translateX(calc(100% + 20px)) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Exit animation - Quick slide out */
+@keyframes toast-exit-neobrutalism {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(100% + 20px)) scale(0.9);
+  }
+}
+
+/* Apply animations */
+[data-sonner-toast][data-mounted='true'] {
+  animation: toast-enter-neobrutalism var(--toast-animation-duration) var(--toast-animation-easing) !important;
+}
+
+[data-sonner-toast][data-removed='true'] {
+  animation: toast-exit-neobrutalism var(--toast-animation-duration) var(--toast-animation-easing) !important;
+}
+
+/* ========================================
+   8. STACKING & POSITIONING
+   ======================================== */
+
+/* Toasts yang di-stack (overlapping) */
+[data-sonner-toast][data-expanded='false'] {
+  transform: scale(0.98);
+  opacity: 1 !important; /* Full opacity, tidak transparan */
+}
+
+[data-sonner-toast][data-expanded='false']:hover {
+  transform: scale(0.98) translate(2px, 2px);
+  opacity: 1 !important;
+}
+
+/* ========================================
+   9. PROGRESS BAR (untuk duration)
+   ======================================== */
+
+/* Progress bar styling jika ada */
+[data-sonner-toast] [data-progress] {
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  height: 3px !important;
+  border-radius: 0px !important;
+}
+
+/* ========================================
+   10. RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+@media (max-width: 640px) {
+  :root {
+    --toast-padding: 14px 16px;
+    --toast-font-size: 13px;
+    --toast-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
+    --toast-shadow-hover: 1px 1px 0px 0px rgba(0, 0, 0, 1);
+  }
+
+  [data-sonner-toast] {
+    max-width: calc(100vw - 32px) !important;
+  }
+}
+
+/* ========================================
+   11. ACCESSIBILITY
+   ======================================== */
+
+/* Focus state untuk keyboard navigation */
+[data-sonner-toast]:focus-visible {
+  outline: 3px solid #000000;
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  [data-sonner-toast] {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  [data-sonner-toast]:hover {
+    transform: none !important;
+  }
+}

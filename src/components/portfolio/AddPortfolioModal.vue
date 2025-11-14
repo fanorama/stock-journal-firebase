@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import type { PortfolioInput } from '@/types'
 import { usePortfoliosStore } from '@/stores'
+import { toast } from 'vue-sonner'
 
 interface Props {
   show: boolean
@@ -124,10 +125,13 @@ const handleSubmit = async () => {
     }
     errors.value = {}
 
+    toast.success('Portfolio berhasil dibuat!')
     emit('success', portfolioId)
     emit('close')
   } catch (err: any) {
-    submitError.value = err.message || 'Gagal membuat portfolio'
+    const errorMessage = err.message || 'Gagal membuat portfolio'
+    submitError.value = errorMessage
+    toast.error(`Gagal membuat portfolio: ${errorMessage}`)
   } finally {
     isSubmitting.value = false
   }

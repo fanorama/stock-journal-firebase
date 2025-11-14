@@ -9,6 +9,8 @@ import { useAuthStore } from '@/stores/auth'
 
 // Import vue-sonner styles
 import 'vue-sonner/style.css'
+// Import custom neobrutalism styling untuk toast
+import './assets/toast-neobrutalism.css'
 
 const app = createApp(App)
 

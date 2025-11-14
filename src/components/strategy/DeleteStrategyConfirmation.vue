@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import type { Strategy } from '@/types'
 import { useStrategiesStore } from '@/stores'
+import { toast } from 'vue-sonner'
 
 interface Props {
   show: boolean
@@ -35,10 +36,13 @@ const handleDelete = async () => {
 
   try {
     await strategiesStore.deleteStrategy(props.strategy.id)
+    toast.success('Strategy berhasil dihapus!')
     emit('success')
     emit('close')
   } catch (err: any) {
-    deleteError.value = err.message || 'Gagal menghapus strategy'
+    const errorMessage = err.message || 'Gagal menghapus strategy'
+    deleteError.value = errorMessage
+    toast.error(`Gagal menghapus strategy: ${errorMessage}`)
   } finally {
     isDeleting.value = false
   }

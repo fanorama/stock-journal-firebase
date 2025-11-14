@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import type { Portfolio } from '@/types'
 import { usePortfoliosStore } from '@/stores'
+import { toast } from 'vue-sonner'
 
 interface Props {
   show: boolean
@@ -35,10 +36,13 @@ const handleDelete = async () => {
 
   try {
     await portfoliosStore.deletePortfolio(props.portfolio.id)
+    toast.success('Portfolio berhasil dihapus!')
     emit('success')
     emit('close')
   } catch (err: any) {
-    deleteError.value = err.message || 'Gagal menghapus portfolio'
+    const errorMessage = err.message || 'Gagal menghapus portfolio'
+    deleteError.value = errorMessage
+    toast.error(`Gagal menghapus portfolio: ${errorMessage}`)
   } finally {
     isDeleting.value = false
   }

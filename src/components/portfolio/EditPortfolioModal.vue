@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import type { Portfolio, PortfolioInput } from '@/types'
 import { usePortfoliosStore } from '@/stores'
+import { toast } from 'vue-sonner'
 
 interface Props {
   show: boolean
@@ -140,10 +141,13 @@ const handleSubmit = async () => {
 
   try {
     await portfoliosStore.updatePortfolio(props.portfolio.id, formData.value)
+    toast.success('Portfolio berhasil diupdate!')
     emit('success')
     emit('close')
   } catch (err: any) {
-    submitError.value = err.message || 'Gagal update portfolio'
+    const errorMessage = err.message || 'Gagal update portfolio'
+    submitError.value = errorMessage
+    toast.error(`Gagal mengupdate portfolio: ${errorMessage}`)
   } finally {
     isSubmitting.value = false
   }

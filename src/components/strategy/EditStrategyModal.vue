@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import type { Strategy, StrategyInput } from '@/types'
 import { useStrategiesStore } from '@/stores'
 import RuleBuilder from './RuleBuilder.vue'
+import { toast } from 'vue-sonner'
 
 interface Props {
   show: boolean
@@ -109,10 +110,13 @@ const handleSubmit = async () => {
   try {
     await strategiesStore.updateStrategy(props.strategy.id, formData.value)
 
+    toast.success('Strategy berhasil diupdate!')
     emit('success')
     emit('close')
   } catch (err: any) {
-    submitError.value = err.message || 'Gagal update strategy'
+    const errorMessage = err.message || 'Gagal update strategy'
+    submitError.value = errorMessage
+    toast.error(`Gagal mengupdate strategy: ${errorMessage}`)
   } finally {
     isSubmitting.value = false
   }
