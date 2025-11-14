@@ -481,8 +481,9 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
     try {
       await updateDailyPlanFirestore(authStore.user.uid, planId, {
         review: {
-          ...plan.review,
           notes,
+          adherenceRate: plan.review?.adherenceRate ?? 0,
+          completedAt: plan.review?.completedAt,
         },
       })
     } catch (err: any) {
@@ -524,6 +525,7 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
   return {
     // State
     dailyPlans: plansList,
+    dailyPlansPending,
     isLoading: computed(() => isLoading.value || dailyPlansPending.value),
     error: computed(() => error.value || dailyPlansError.value?.message || null),
 

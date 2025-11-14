@@ -22,8 +22,13 @@ const currentPlan = computed(() => {
 const isCreatingPlan = ref(false)
 
 watch(
-  selectedDateId,
-  async (newDateId) => {
+  [selectedDateId, () => dailyPlansStore.dailyPlansPending],
+  async ([newDateId, isPending]) => {
+    // Wait for VueFire to finish loading before auto-creating plan
+    if (isPending) {
+      return
+    }
+
     if (!dailyPlansStore.hasPlanForDate(newDateId) && !isCreatingPlan.value) {
       isCreatingPlan.value = true
       try {

@@ -149,26 +149,28 @@ service cloud.firestore {
                       && hasRequiredField('updatedAt')
                       && isValidTimestamp(request.resource.data.updatedAt);
 
-        // Allow updating daily plan
+        // Allow updating daily plan (partial updates supported)
         allow update: if isOwner(userId)
-                      && hasRequiredField('id')
+                      // Validate immutable fields are not changed
+                      && request.resource.data.id == resource.data.id
                       && request.resource.data.id == planId
-                      && hasRequiredField('userId')
+                      && request.resource.data.userId == resource.data.userId
                       && request.resource.data.userId == userId
-                      && hasRequiredField('planDate')
-                      && request.resource.data.planDate is string
-                      && hasRequiredField('watchlist')
-                      && request.resource.data.watchlist is list
-                      && hasRequiredField('checklist')
-                      && request.resource.data.checklist is list
-                      && hasRequiredField('checklistProgress')
-                      && request.resource.data.checklistProgress.keys().hasAll(['completed', 'total'])
-                      && hasRequiredField('review')
-                      && request.resource.data.review.keys().hasAll(['notes', 'adherenceRate'])
-                      && hasRequiredField('status')
-                      && request.resource.data.status is string
-                      && request.resource.data.status in ['draft', 'active', 'completed']
-                      && hasRequiredField('updatedAt')
+                      && request.resource.data.planDate == resource.data.planDate
+                      // Conditional validation - validate structure only if field is being updated
+                      && (!('watchlist' in request.writeFields) || request.resource.data.watchlist is list)
+                      && (!('checklist' in request.writeFields) || request.resource.data.checklist is list)
+                      && (!('checklistProgress' in request.writeFields) ||
+                          (request.resource.data.checklistProgress.keys().hasAll(['completed', 'total'])
+                           && request.resource.data.checklistProgress.completed is number
+                           && request.resource.data.checklistProgress.total is number))
+                      && (!('review' in request.writeFields) ||
+                          (request.resource.data.review.keys().hasAll(['notes', 'adherenceRate'])
+                           && request.resource.data.review.notes is string
+                           && request.resource.data.review.adherenceRate is number))
+                      && (!('status' in request.writeFields) ||
+                          (request.resource.data.status is string && request.resource.data.status in ['draft', 'active', 'completed']))
+                      && 'updatedAt' in request.writeFields
                       && isValidTimestamp(request.resource.data.updatedAt);
 
         // Allow deleting daily plan
