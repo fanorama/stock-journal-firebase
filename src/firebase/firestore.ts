@@ -192,10 +192,16 @@ export async function updatePortfolio(
   updates: Partial<PortfolioInput>
 ): Promise<void> {
   const portfolioRef = getPortfolioDoc(userId, portfolioId)
-  await updateDoc(portfolioRef, {
+
+  const updateData = {
     ...updates,
     updatedAt: serverTimestamp(),
-  })
+  }
+
+  // Remove undefined fields before sending to Firestore
+  const cleanedData = removeUndefinedFields(updateData)
+
+  await updateDoc(portfolioRef, cleanedData)
 }
 
 /**
@@ -236,7 +242,11 @@ export async function createTrade(
     updatedAt: serverTimestamp(),
   }
 
-  const docRef = await addDoc(tradesRef, tradeData)
+  // Remove undefined fields before sending to Firestore
+  // Firestore does not support undefined values
+  const cleanedData = removeUndefinedFields(tradeData)
+
+  const docRef = await addDoc(tradesRef, cleanedData)
   return docRef.id
 }
 
@@ -261,7 +271,11 @@ export async function updateTrade(
     updateData.date = Timestamp.fromDate(updates.date)
   }
 
-  await updateDoc(tradeRef, updateData)
+  // Remove undefined fields before sending to Firestore
+  // Firestore does not support undefined values
+  const cleanedData = removeUndefinedFields(updateData)
+
+  await updateDoc(tradeRef, cleanedData)
 }
 
 /**
@@ -307,10 +321,16 @@ export async function updateJournal(
   updates: Partial<JournalInput>
 ): Promise<void> {
   const journalRef = getJournalDoc(userId, portfolioId, journalId)
-  await updateDoc(journalRef, {
+
+  const updateData = {
     ...updates,
     updatedAt: serverTimestamp(),
-  })
+  }
+
+  // Remove undefined fields before sending to Firestore
+  const cleanedData = removeUndefinedFields(updateData)
+
+  await updateDoc(journalRef, cleanedData)
 }
 
 /**
@@ -355,10 +375,16 @@ export async function updateStrategy(
   updates: Partial<StrategyInput>
 ): Promise<void> {
   const strategyRef = getStrategyDoc(userId, strategyId)
-  await updateDoc(strategyRef, {
+
+  const updateData = {
     ...updates,
     updatedAt: serverTimestamp(),
-  })
+  }
+
+  // Remove undefined fields before sending to Firestore
+  const cleanedData = removeUndefinedFields(updateData)
+
+  await updateDoc(strategyRef, cleanedData)
 }
 
 /**
@@ -505,10 +531,16 @@ export async function updateDailyPlan(
   updates: Partial<Omit<DailyPlan, 'id' | 'userId' | 'createdAt'>>
 ): Promise<void> {
   const planRef = getDailyPlanDoc(userId, planId)
-  await updateDoc(planRef, {
+
+  const updateData = {
     ...updates,
     updatedAt: serverTimestamp(),
-  })
+  }
+
+  // Remove undefined fields before sending to Firestore
+  const cleanedData = removeUndefinedFields(updateData)
+
+  await updateDoc(planRef, cleanedData)
 }
 
 /**
@@ -527,6 +559,23 @@ export async function deleteDailyPlan(
 // ============================================================================
 // Utility Functions
 // ============================================================================
+
+/**
+ * Remove undefined fields from an object
+ * Firestore does not support undefined values, so we need to remove them
+ * before sending data to Firestore
+ * @param obj - Object to clean
+ * @returns Object without undefined fields
+ */
+function removeUndefinedFields<T extends Record<string, any>>(obj: T): Partial<T> {
+  const cleaned: any = {}
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] !== undefined) {
+      cleaned[key] = obj[key]
+    }
+  })
+  return cleaned
+}
 
 /**
  * Format Date object to plan ID string (YYYY-MM-DD)

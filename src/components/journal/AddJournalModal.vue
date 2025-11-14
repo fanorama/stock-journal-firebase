@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useJournalsStore, usePortfoliosStore, useTradesStore } from '@/stores'
 import type { JournalInput } from '@/types'
+import { toast } from 'vue-sonner'
 
 /**
  * Props
@@ -123,11 +124,18 @@ const handleSubmit = async () => {
     }
 
     const journalId = await journalsStore.createJournal(input)
+
+    // Show success toast
+    toast.success('Journal entry berhasil ditambahkan!')
+
     emit('success', journalId)
     emit('close')
     resetForm()
   } catch (err: any) {
-    error.value = err.message || 'Gagal membuat journal entry'
+    const errorMessage = err.message || 'Gagal membuat journal entry'
+    error.value = errorMessage
+    // Show error toast
+    toast.error(`Gagal menambahkan journal entry: ${errorMessage}`)
   } finally {
     isSubmitting.value = false
   }

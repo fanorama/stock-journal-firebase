@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import type { Trade } from '@/types'
 import { useTradesStore } from '@/stores'
+import { toast } from 'vue-sonner'
 
 interface Props {
   show: boolean
@@ -57,10 +58,17 @@ const handleDelete = async () => {
 
   try {
     await tradesStore.deleteTrade(props.trade.id)
+
+    // Show success toast
+    toast.success('Trade berhasil dihapus!')
+
     emit('success')
     emit('close')
   } catch (err: any) {
-    deleteError.value = err.message || 'Gagal menghapus trade'
+    const errorMessage = err.message || 'Gagal menghapus trade'
+    deleteError.value = errorMessage
+    // Show error toast
+    toast.error(`Gagal menghapus trade: ${errorMessage}`)
   } finally {
     isDeleting.value = false
   }

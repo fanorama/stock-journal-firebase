@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useJournalsStore, usePortfoliosStore } from '@/stores'
 import type { Journal } from '@/types'
+import { toast } from 'vue-sonner'
 
 /**
  * Props
@@ -74,10 +75,17 @@ const handleDelete = async () => {
 
   try {
     await journalsStore.deleteJournal(props.journal.id)
+
+    // Show success toast
+    toast.success('Journal entry berhasil dihapus!')
+
     emit('success')
     emit('close')
   } catch (err: any) {
-    error.value = err.message || 'Gagal menghapus journal entry'
+    const errorMessage = err.message || 'Gagal menghapus journal entry'
+    error.value = errorMessage
+    // Show error toast
+    toast.error(`Gagal menghapus journal entry: ${errorMessage}`)
   } finally {
     isDeleting.value = false
   }

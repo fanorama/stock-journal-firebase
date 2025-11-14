@@ -4,6 +4,7 @@ import type { TradeInput } from '@/types'
 import { useTradesStore } from '@/stores'
 import { usePortfoliosStore } from '@/stores'
 import StrategySelector from '@/components/strategy/StrategySelector.vue'
+import { toast } from 'vue-sonner'
 
 interface Props {
   show: boolean
@@ -174,6 +175,9 @@ const handleSubmit = async () => {
 
     const tradeId = await tradesStore.createTrade(tradeInput)
 
+    // Show success toast
+    toast.success('Trade berhasil ditambahkan!')
+
     // Reset form
     formData.value = {
       symbol: '',
@@ -189,7 +193,10 @@ const handleSubmit = async () => {
     emit('success', tradeId)
     emit('close')
   } catch (err: any) {
-    submitError.value = err.message || 'Gagal membuat trade'
+    const errorMessage = err.message || 'Gagal membuat trade'
+    submitError.value = errorMessage
+    // Show error toast
+    toast.error(`Gagal menambahkan trade: ${errorMessage}`)
   } finally {
     isSubmitting.value = false
   }

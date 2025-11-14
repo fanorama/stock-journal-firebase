@@ -4,6 +4,7 @@ import type { Trade, TradeInput } from '@/types'
 import { useTradesStore } from '@/stores'
 import { usePortfoliosStore } from '@/stores'
 import StrategySelector from '@/components/strategy/StrategySelector.vue'
+import { toast } from 'vue-sonner'
 
 interface Props {
   show: boolean
@@ -163,10 +164,16 @@ const handleSubmit = async () => {
 
     await tradesStore.updateTrade(props.trade.id, updates)
 
+    // Show success toast
+    toast.success('Trade berhasil diupdate!')
+
     emit('success')
     emit('close')
   } catch (err: any) {
-    submitError.value = err.message || 'Gagal update trade'
+    const errorMessage = err.message || 'Gagal update trade'
+    submitError.value = errorMessage
+    // Show error toast
+    toast.error(`Gagal mengupdate trade: ${errorMessage}`)
   } finally {
     isSubmitting.value = false
   }
