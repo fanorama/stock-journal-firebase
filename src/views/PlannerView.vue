@@ -6,6 +6,7 @@ import ReviewSection from '@/components/planner/ReviewSection.vue'
 import type { WatchlistItem, WatchlistItemInput, ChecklistItem } from '@/types'
 import { useDailyPlansStore } from '@/stores'
 import { formatDateToId } from '@/firebase/firestore'
+import { toast } from 'vue-sonner'
 
 const dailyPlansStore = useDailyPlansStore()
 
@@ -96,7 +97,7 @@ const planStatusBadge = computed(() => {
 // Watchlist actions
 const handleAddWatchlistItem = async (item: WatchlistItemInput) => {
   if (!currentPlan.value) {
-    alert('⚠️ Plan belum tersedia. Silakan refresh halaman.')
+    toast.warning('Plan belum tersedia. Silakan refresh halaman.')
     return
   }
 
@@ -104,11 +105,8 @@ const handleAddWatchlistItem = async (item: WatchlistItemInput) => {
     await dailyPlansStore.addWatchlistItem(currentPlan.value.id, item)
   } catch (error) {
     console.error('Failed to add watchlist item:', error)
-    alert(
-      '❌ Gagal menambahkan stock ke watchlist.\n\nPesan error: ' +
-        (error instanceof Error ? error.message : 'Unknown error') +
-        '\n\nSilakan coba lagi atau refresh halaman.'
-    )
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    toast.error(`Gagal menambahkan stock ke watchlist: ${errorMessage}. Silakan coba lagi.`)
   }
 }
 
@@ -127,7 +125,7 @@ const handleUpdateWatchlistItem = async (
 
 const handleDeleteWatchlistItem = async (itemId: string) => {
   if (!currentPlan.value) {
-    alert('⚠️ Plan belum tersedia. Silakan refresh halaman.')
+    toast.warning('Plan belum tersedia. Silakan refresh halaman.')
     return
   }
 
@@ -135,11 +133,8 @@ const handleDeleteWatchlistItem = async (itemId: string) => {
     await dailyPlansStore.deleteWatchlistItem(currentPlan.value.id, itemId)
   } catch (error) {
     console.error('Failed to delete watchlist item:', error)
-    alert(
-      '❌ Gagal menghapus item dari watchlist.\n\nPesan error: ' +
-        (error instanceof Error ? error.message : 'Unknown error') +
-        '\n\nSilakan coba lagi atau refresh halaman.'
-    )
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    toast.error(`Gagal menghapus item dari watchlist: ${errorMessage}. Silakan coba lagi.`)
   }
 }
 
@@ -237,7 +232,7 @@ const handleCopyFromYesterday = async () => {
     const yesterdayPlan = dailyPlansStore.getPlanByDate(yesterdayId)
 
     if (!yesterdayPlan || !yesterdayPlan.checklist || yesterdayPlan.checklist.length === 0) {
-      alert('Tidak ada checklist dari kemarin untuk di-copy.')
+      toast.info('Tidak ada checklist dari kemarin untuk di-copy.')
       return
     }
 
@@ -256,10 +251,10 @@ const handleCopyFromYesterday = async () => {
       })
     }
 
-    alert(`Berhasil copy ${yesterdayPlan.checklist.length} items dari kemarin!`)
+    toast.success(`Berhasil copy ${yesterdayPlan.checklist.length} items dari kemarin!`)
   } catch (error) {
     console.error('Failed to copy checklist from yesterday:', error)
-    alert('Gagal copy checklist dari kemarin. Silakan coba lagi.')
+    toast.error('Gagal copy checklist dari kemarin. Silakan coba lagi.')
   }
 }
 
@@ -305,20 +300,17 @@ const handleUpdateReviewNotes = async (notes: string) => {
 
 const handleCompletePlan = async () => {
   if (!currentPlan.value) {
-    alert('⚠️ Plan belum tersedia. Silakan refresh halaman.')
+    toast.warning('Plan belum tersedia. Silakan refresh halaman.')
     return
   }
 
   try {
     await dailyPlansStore.completePlan(currentPlan.value.id, currentPlan.value.review.notes)
-    alert('✅ Plan berhasil di-complete! Semua data sudah tersimpan.')
+    toast.success('Plan berhasil di-complete! Semua data sudah tersimpan.')
   } catch (error) {
     console.error('Failed to complete plan:', error)
-    alert(
-      '❌ Gagal melakukan complete plan.\n\nPesan error: ' +
-        (error instanceof Error ? error.message : 'Unknown error') +
-        '\n\nSilakan coba lagi atau refresh halaman.'
-    )
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    toast.error(`Gagal melakukan complete plan: ${errorMessage}. Silakan coba lagi.`)
   }
 }
 </script>
@@ -450,6 +442,7 @@ const handleCompletePlan = async () => {
           :review="currentPlan.review"
           :status="currentPlan.status"
           :is-loading="false"
+          :is-saving-review="dailyPlansStore.isUpdatingReview"
           @update-notes="handleUpdateReviewNotes"
           @complete-plan="handleCompletePlan"
         />

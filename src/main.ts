@@ -7,6 +7,9 @@ import App from './App.vue'
 import router from './router'
 import { useAuthStore } from '@/stores/auth'
 
+// Import vue-sonner styles
+import 'vue-sonner/style.css'
+
 const app = createApp(App)
 
 // Initialize Pinia first

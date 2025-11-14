@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import AdherenceMetrics from './AdherenceMetrics.vue'
 import ReviewNotesEditor from './ReviewNotesEditor.vue'
 import type { WatchlistItem, ReviewData } from '@/types'
+import { toast } from 'vue-sonner'
 
 interface Props {
   planId: string
@@ -10,6 +11,7 @@ interface Props {
   review: ReviewData
   status: 'draft' | 'active' | 'completed'
   isLoading?: boolean
+  isSavingReview?: boolean
 }
 
 const props = defineProps<Props>()
@@ -102,15 +104,12 @@ const handleCompletePlan = () => {
 
   // Pre-completion validation
   if (hasValidationErrors.value) {
-    const errorMessage = [
-      '⚠️ Plan belum bisa di-complete:',
-      '',
-      ...validationErrors.value.map((err, idx) => `${idx + 1}. ${err}`),
-      '',
-      'Selesaikan semua hal di atas terlebih dahulu.',
-    ].join('\n')
-
-    alert(errorMessage)
+    // Show each validation error as separate toast for better UX
+    validationErrors.value.forEach((err, idx) => {
+      toast.error(`${idx + 1}. ${err}`, {
+        duration: 5000,
+      })
+    })
     return
   }
 
@@ -223,6 +222,7 @@ const handleCompletePlan = () => {
     <ReviewNotesEditor
       :notes="review.notes"
       :is-readonly="status === 'completed'"
+      :is-saving="isSavingReview"
       @update="handleUpdateNotes"
     />
 
