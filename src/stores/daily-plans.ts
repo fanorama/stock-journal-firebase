@@ -22,6 +22,7 @@ import {
 } from '@/firebase/firestore'
 import { serverTimestamp, Timestamp } from 'firebase/firestore'
 import { useAuthStore } from './auth'
+import { toast } from 'vue-sonner'
 
 /**
  * Daily Plans store for managing daily trading plans with Firestore integration
@@ -120,7 +121,9 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
       const planId = await createDailyPlanFirestore(authStore.user.uid, planInput)
       return planId
     } catch (err: any) {
-      error.value = err.message || 'Gagal membuat plan'
+      const errorMessage = err.message || 'Gagal membuat plan'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
@@ -160,8 +163,12 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
       await updateDailyPlanFirestore(authStore.user.uid, planId, {
         watchlist: updatedWatchlist,
       })
+
+      toast.success('Saham berhasil ditambahkan ke watchlist')
     } catch (err: any) {
-      error.value = err.message || 'Gagal menambah item ke watchlist'
+      const errorMessage = err.message || 'Gagal menambah item ke watchlist'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
@@ -196,8 +203,12 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
       await updateDailyPlanFirestore(authStore.user.uid, planId, {
         watchlist: updatedWatchlist,
       })
+
+      toast.success('Watchlist item berhasil diupdate')
     } catch (err: any) {
-      error.value = err.message || 'Gagal update watchlist item'
+      const errorMessage = err.message || 'Gagal update watchlist item'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
@@ -229,8 +240,12 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
       await updateDailyPlanFirestore(authStore.user.uid, planId, {
         watchlist: updatedWatchlist,
       })
+
+      toast.success('Watchlist item berhasil dihapus')
     } catch (err: any) {
-      error.value = err.message || 'Gagal delete watchlist item'
+      const errorMessage = err.message || 'Gagal delete watchlist item'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
@@ -317,8 +332,12 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
           total: updatedChecklist.length,
         },
       })
+
+      toast.success('Checklist item berhasil ditambahkan')
     } catch (err: any) {
-      error.value = err.message || 'Gagal menambah checklist item'
+      const errorMessage = err.message || 'Gagal menambah checklist item'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
@@ -365,8 +384,12 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
           total: updatedChecklist.length,
         },
       })
+
+      toast.success(completed ? 'Checklist item diselesaikan' : 'Checklist item dibatalkan')
     } catch (err: any) {
-      error.value = err.message || 'Gagal update checklist item'
+      const errorMessage = err.message || 'Gagal update checklist item'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
@@ -403,8 +426,12 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
           total: updatedChecklist.length,
         },
       })
+
+      toast.success('Checklist item berhasil dihapus')
     } catch (err: any) {
-      error.value = err.message || 'Gagal delete checklist item'
+      const errorMessage = err.message || 'Gagal delete checklist item'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
@@ -451,8 +478,12 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
         review,
         status: 'completed',
       })
+
+      toast.success('Plan berhasil diselesaikan dan direview')
     } catch (err: any) {
-      error.value = err.message || 'Gagal complete plan'
+      const errorMessage = err.message || 'Gagal complete plan'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
@@ -486,8 +517,12 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
           completedAt: plan.review?.completedAt,
         },
       })
+
+      toast.success('Review notes berhasil diupdate')
     } catch (err: any) {
-      error.value = err.message || 'Gagal update review notes'
+      const errorMessage = err.message || 'Gagal update review notes'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
@@ -507,8 +542,12 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
 
     try {
       await deleteDailyPlanFirestore(authStore.user.uid, planId)
+
+      toast.success('Plan berhasil dihapus')
     } catch (err: any) {
-      error.value = err.message || 'Gagal delete plan'
+      const errorMessage = err.message || 'Gagal delete plan'
+      error.value = errorMessage
+      toast.error(errorMessage)
       throw err
     } finally {
       isLoading.value = false
