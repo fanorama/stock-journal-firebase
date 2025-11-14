@@ -34,6 +34,7 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
 
   // State
   const isLoading = ref(false)
+  const isUpdatingReview = ref(false) // Separate loading state for review updates
   const error = ref<string | null>(null)
 
   // Reactive Firestore collection binding
@@ -365,15 +366,25 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
     error.value = null
 
     try {
-      const updatedChecklist = plan.checklist.map((item) =>
-        item.id === itemId
-          ? {
+      const updatedChecklist = plan.checklist.map((item) => {
+        if (item.id === itemId) {
+          // When completing, add completedAt timestamp
+          if (completed) {
+            return {
               ...item,
               completed,
-              completedAt: completed ? Timestamp.now() : undefined,
+              completedAt: Timestamp.now(),
             }
-          : item
-      )
+          }
+          // When uncompleting, remove completedAt field
+          const { completedAt, ...itemWithoutCompletedAt } = item
+          return {
+            ...itemWithoutCompletedAt,
+            completed,
+          }
+        }
+        return item
+      })
 
       const completedCount = updatedChecklist.filter((i) => i.completed).length
 
@@ -506,26 +517,34 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
       throw new Error('Plan tidak ditemukan')
     }
 
-    isLoading.value = true
+    // Use separate loading state to prevent re-rendering entire component
+    isUpdatingReview.value = true
     error.value = null
 
     try {
+      // Build review object, only include completedAt if it exists
+      const reviewUpdate: ReviewData = {
+        notes,
+        adherenceRate: plan.review?.adherenceRate ?? 0,
+      }
+
+      // Only add completedAt if it has a value (not undefined)
+      if (plan.review?.completedAt) {
+        reviewUpdate.completedAt = plan.review.completedAt
+      }
+
       await updateDailyPlanFirestore(authStore.user.uid, planId, {
-        review: {
-          notes,
-          adherenceRate: plan.review?.adherenceRate ?? 0,
-          completedAt: plan.review?.completedAt,
-        },
+        review: reviewUpdate,
       })
 
-      toast.success('Review notes berhasil diupdate')
+      // Silent success - no toast to avoid interrupting typing experience
     } catch (err: any) {
       const errorMessage = err.message || 'Gagal update review notes'
       error.value = errorMessage
       toast.error(errorMessage)
       throw err
     } finally {
-      isLoading.value = false
+      isUpdatingReview.value = false
     }
   }
 
@@ -566,6 +585,7 @@ export const useDailyPlansStore = defineStore('daily-plans', () => {
     dailyPlans: plansList,
     dailyPlansPending,
     isLoading: computed(() => isLoading.value || dailyPlansPending.value),
+    isUpdatingReview: computed(() => isUpdatingReview.value),
     error: computed(() => error.value || dailyPlansError.value?.message || null),
 
     // Getters
